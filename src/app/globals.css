@@ -52,11 +52,14 @@
   top: 0;
   left: 0;
   opacity: 1 !important;
-  transition: opacity 0.3s ease;
-  mix-blend-mode: difference;
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
-  display: block !important;
   visibility: visible !important;
+  display: block !important;
+  transition:
+    opacity 0.3s ease,
+    width 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    height 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  mix-blend-mode: difference;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
 }
 
 /* Cursor lines */
@@ -68,7 +71,9 @@
   transform-origin: center;
   top: 50%;
   left: 50%;
-  transition: all 0.2s ease;
+  transition:
+    all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.2s ease;
   opacity: 1;
   display: block !important;
   visibility: visible !important;
@@ -169,9 +174,9 @@
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   transform-style: preserve-3d;
-  will-change: transform;
+  will-change: transform, box-shadow;
   padding: 2rem;
   position: relative;
   overflow: hidden;
@@ -189,6 +194,7 @@
   z-index: -1;
   pointer-events: none;
   opacity: 0.4;
+  transition: opacity 0.4s ease;
 }
 
 .glass-card::after {
@@ -200,16 +206,16 @@
   height: 200%;
   background: radial-gradient(
     circle,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0) 80%
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0) 70%
   );
   opacity: 0;
   transform: scale(0.8);
   z-index: -1;
   pointer-events: none;
   transition:
-    opacity 0.5s,
-    transform 0.5s;
+    opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+    transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .glass-card:hover::after {
@@ -222,6 +228,7 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
+  transform-style: preserve-3d;
 }
 
 /* Loading screen text animation */
@@ -262,13 +269,12 @@
 /* Plus icon subtle animation */
 @keyframes pulseGlow {
   0% {
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    filter: blur(12px);
+    opacity: 0.3;
   }
   100% {
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    filter: blur(16px);
+    opacity: 0.7;
   }
 }
 
@@ -329,19 +335,62 @@ body {
   perspective: 1000px;
 }
 
+/* Profile card enhanced styles */
 .profile-card {
   transform-style: preserve-3d;
-  transition: transform 0.5s ease;
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform, box-shadow;
+  overflow: hidden;
+  position: relative;
 }
 
-.profile-card:hover {
-  transform: translateY(-5px) rotateX(2deg);
+.profile-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right bottom,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0)
+  );
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
-/* Micro-interactions */
+.profile-card:hover::before {
+  opacity: 1;
+}
+
+/* Enhanced social links */
+.social-link {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow;
+  overflow: hidden;
+}
+
+.social-link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+}
+
+.social-link:hover::before {
+  opacity: 1;
+}
+
 .social-link:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 /* Status dot glow effect */
@@ -404,9 +453,10 @@ body {
   font-weight: 500;
 }
 
-/* Text glow effect */
+/* Text glow enhancements */
 .text-glow {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+  transition: text-shadow 0.5s ease;
 }
 
 /* Name stylization */
@@ -416,6 +466,8 @@ body {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   position: relative;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: filter 0.5s ease;
 }
 
 .name-gradient::after {
@@ -430,6 +482,7 @@ body {
   -webkit-text-fill-color: transparent;
   opacity: 0.5;
   filter: blur(12px);
+  animation: pulseGlow 3s infinite alternate ease-in-out;
 }
 
 @layer base {
@@ -572,6 +625,15 @@ main {
     cursor: none !important;
   }
 
+  /* Make sure custom cursor is visible */
+  .custom-cursor,
+  .custom-cursor::before,
+  .custom-cursor::after {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
   /* Exception for loading screen */
   .loading-overlay {
     cursor: pointer !important;
@@ -627,4 +689,20 @@ main {
   100% {
     opacity: 1;
   }
+}
+
+/* New radial entrance animation for loading overlay */
+@keyframes radialReveal {
+  0% {
+    clip-path: circle(0% at center);
+    opacity: 0;
+  }
+  100% {
+    clip-path: circle(150% at center);
+    opacity: 1;
+  }
+}
+
+.radial-reveal {
+  animation: radialReveal 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
