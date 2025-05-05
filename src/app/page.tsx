@@ -680,13 +680,12 @@ export default function Home() {
           ref={cardRef}
           className="z-10 px-4 sm:px-5 py-6 sm:py-8 max-w-md w-full perspective-1000">
           <div className="profile-card bg-black/30 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-6 sm:p-8 transition-all duration-500 profile-item">
-            <div
-              className="mb-1 sm:mb-2 text-center"
-              style={{ marginBottom: "0.5rem" }}>
+            {/* Header Section with Name and Age */}
+            <div className="text-center mb-8">
               <motion.h1
                 ref={titleRef}
                 data-text="Matthew"
-                className="text-5xl font-bold mb-1 profile-item name-gradient text-glow"
+                className="text-5xl font-bold profile-item name-gradient text-glow"
                 initial={{ opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
@@ -700,7 +699,7 @@ export default function Home() {
                   textShadow: "0 0 10px rgba(255, 255, 255, 0.7)",
                   zIndex: 99,
                   position: "relative",
-                  marginBottom: "-5px" /* Reduce space after name */,
+                  marginBottom: "12px" /* Space between name and age */,
                 }}>
                 Matthew
               </motion.h1>
@@ -713,14 +712,10 @@ export default function Home() {
                   duration: 0.8,
                 }}
                 style={{
-                  marginBottom: "40px",
                   position: "relative",
                   zIndex: 30,
-                  marginTop: "-40px",
                 }}>
-                <span
-                  className="text-sm gradient-text inline-block"
-                  style={{ transform: "translateY(-30px)" }}>
+                <span className="text-sm gradient-text inline-block">
                   <span className="font-medium">{age}</span> y/o Front-End
                   Developer
                 </span>

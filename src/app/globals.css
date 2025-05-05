@@ -519,7 +519,8 @@ body {
   display: inline-block;
   backdrop-filter: blur(4px);
   font-weight: 500;
-  margin-top: -38px; /* Much larger negative margin to position it much higher */
+  margin-top: 0; /* Reset to 0 to remove any negative margin */
+  margin-bottom: 5px; /* Add slight bottom margin */
   position: relative;
   z-index: 20; /* Higher z-index to ensure it stays above other elements */
 }
