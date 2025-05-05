@@ -10,21 +10,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Matthew | Front-End Developer",
-  description: "Personal portfolio website showcasing my work and skills.",
-  icons: {
-    icon: [{ url: "/favicon.ico", sizes: "any" }],
-    shortcut: "/favicon.ico",
-  },
-  manifest: "/site.webmanifest",
+  title: "Matthew's Portfolio",
+  description: "Personal portfolio and space",
+  viewport:
+    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
   themeColor: "#000000",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    minimumScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: "cover",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.ico",
   },
   appleWebApp: {
     capable: true,
@@ -56,11 +49,39 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
-        {/* Simplify the favicon implementation */}
-        <link href="/favicon.ico" rel="icon" type="image/x-icon" />
-        <meta name="mobile-web-app-capable" content="yes" />
+        <link
+          rel="preload"
+          href="https://avatars.githubusercontent.com/u/83614613?v=4"
+          as="image"
+          type="image/jpeg"
+        />
+        <link
+          rel="preload"
+          href="/images/poster.jpg"
+          as="image"
+          type="image/jpeg"
+        />
+        <style>{`
+          /* Critical CSS */
+          body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: ${inter.style.fontFamily};
+          }
+          .loading-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #000, #1a1a1a);
+            z-index: 50;
+          }
+        `}</style>
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <AnimationProvider>{children}</AnimationProvider>

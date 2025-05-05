@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 interface VideoBackgroundProps {
   videoId: string;
@@ -20,31 +20,27 @@ export default function VideoBackground({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const handleCanPlay = useCallback(() => {
+    setIsLoaded(true);
+    if (videoRef.current?.paused) {
+      videoRef.current.play().catch(() => {
+        console.log("Autoplay prevented");
+      });
+    }
+  }, []);
+
   useEffect(() => {
     if (!videoRef.current) return;
 
     const video = videoRef.current;
-
-    // Optimize video loading
     video.preload = "metadata";
     video.playsInline = true;
-
-    const handleCanPlay = () => {
-      setIsLoaded(true);
-      if (video.paused) {
-        video.play().catch(() => {
-          // Handle autoplay restrictions
-          console.log("Autoplay prevented");
-        });
-      }
-    };
-
     video.addEventListener("canplay", handleCanPlay);
 
     return () => {
       video.removeEventListener("canplay", handleCanPlay);
     };
-  }, []);
+  }, [handleCanPlay]);
 
   useEffect(() => {
     if (!videoRef.current) return;
