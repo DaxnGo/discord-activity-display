@@ -1,15 +1,40 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import MusicControls from "@/components/MusicControls";
-import DiscordActivity from "@/components/DiscordActivity";
-import VideoBackground from "@/components/VideoBackground";
-import ParticleBackground from "@/components/ParticleBackground";
 import { useAnimation } from "@/context/AnimationContext";
 import { useCardAnimation } from "@/hooks/useCardAnimation";
 import gsap from "gsap";
-import ViewCounter from "@/components/ViewCounter";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+
+// Lazy load non-critical components
+const MusicControls = dynamic(() => import("@/components/MusicControls"), {
+  ssr: false,
+});
+const DiscordActivity = dynamic(() => import("@/components/DiscordActivity"), {
+  ssr: false,
+});
+const VideoBackground = dynamic(() => import("@/components/VideoBackground"), {
+  ssr: false,
+});
+const ParticleBackground = dynamic(
+  () => import("@/components/ParticleBackground"),
+  { ssr: false }
+);
+const ViewCounter = dynamic(() => import("@/components/ViewCounter"), {
+  ssr: false,
+});
+
+// Preload critical assets
+const preloadAssets = () => {
+  if (typeof window === "undefined") return;
+  const imageUrls = ["https://avatars.githubusercontent.com/u/83614613?v=4"];
+  imageUrls.forEach((url) => {
+    const img = new Image();
+    img.src = url;
+  });
+};
 
 export default function Home() {
   // Add a state to detect if the device is mobile/touch
@@ -321,6 +346,11 @@ export default function Home() {
     };
   }, [hasEntered]);
 
+  // Preload critical assets on mount
+  useEffect(() => {
+    preloadAssets();
+  }, []);
+
   return (
     <>
       {/* Only render the custom cursor for non-mobile devices */}
@@ -354,19 +384,21 @@ export default function Home() {
       ) : (
         // Main application - update this className
         <main className="relative min-h-screen w-full flex flex-col items-center justify-center text-white inset-0 overflow-hidden">
-          {/* Video Background with volume control */}
-          <VideoBackground
-            videoId={lofiVideoId}
-            videoSource={localVideoPath}
-            // Only include lowQualitySource when you have the file
-            // lowQualitySource="/videos/video-low.mp4"
-            isMuted={isMuted}
-            volumeLevel={volumeLevel}
-            useLocalVideo={useLocalVideo}
-          />
+          <Suspense fallback={<div className="fixed inset-0 bg-black" />}>
+            <VideoBackground
+              videoId={lofiVideoId}
+              videoSource={localVideoPath}
+              // Only include lowQualitySource when you have the file
+              // lowQualitySource="/videos/video-low.mp4"
+              isMuted={isMuted}
+              volumeLevel={volumeLevel}
+              useLocalVideo={useLocalVideo}
+            />
+          </Suspense>
 
-          {/* Interactive Particle Effect */}
-          <ParticleBackground />
+          <Suspense fallback={null}>
+            <ParticleBackground />
+          </Suspense>
 
           {/* Content */}
           <div
@@ -399,8 +431,12 @@ export default function Home() {
                   </span>
                 </motion.p>
               </div>
-              {/* Discord Activity */}
-              <DiscordActivity />
+              <Suspense
+                fallback={
+                  <div className="h-[200px] animate-pulse bg-white/10 rounded-lg" />
+                }>
+                <DiscordActivity />
+              </Suspense>
 
               {/* Social Links */}
               <div className="flex justify-center space-x-5 mt-6 profile-item">
@@ -498,16 +534,18 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Music Controls with volume slider - moved outside other container */}
-          <MusicControls
-            onVolumeChange={handleVolumeChange}
-            onVolumeLevel={handleVolumeLevel}
-          />
+          <Suspense fallback={null}>
+            <MusicControls
+              onVolumeChange={handleVolumeChange}
+              onVolumeLevel={handleVolumeLevel}
+            />
+          </Suspense>
 
-          {/* View Counter */}
-          <div className="fixed bottom-6 left-6 z-50 text-white/80 text-xs hover:scale-105 transition-transform duration-300">
-            <ViewCounter />
-          </div>
+          <Suspense fallback={null}>
+            <div className="fixed bottom-6 left-6 z-50 text-white/80 text-xs hover:scale-105 transition-transform duration-300">
+              <ViewCounter />
+            </div>
+          </Suspense>
         </main>
       )}
     </>
