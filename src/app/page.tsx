@@ -710,7 +710,8 @@ export default function Home() {
                   duration: 0.8,
                 }}>
                 <span className="text-sm gradient-text inline-block">
-                  {age} y/o Front-End Developer
+                  <span className="font-medium">{age}</span> y/o Front-End
+                  Developer
                 </span>
               </motion.p>
             </div>

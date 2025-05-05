@@ -500,6 +500,7 @@ body {
   animation: textGradient 5s ease infinite;
 }
 
+/* Styling for the age display */
 .gradient-text {
   background: linear-gradient(
     to right,
@@ -511,7 +512,20 @@ body {
   -webkit-text-fill-color: transparent;
   text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
   letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.3);
+  display: inline-block;
+  backdrop-filter: blur(4px);
   font-weight: 500;
+}
+
+.gradient-text .font-medium {
+  font-weight: 700;
+  color: white;
+  -webkit-text-fill-color: white;
+  padding: 0 2px;
 }
 
 /* Text glow enhancements */
