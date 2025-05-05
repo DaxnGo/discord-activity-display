@@ -25,6 +25,8 @@
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
+    position: fixed !important;
+    z-index: 9999999 !important;
   }
 
   /* Exception for loading overlay */
@@ -60,6 +62,9 @@
     height 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   mix-blend-mode: difference;
   filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
+  transform: translate(-100px, -100px) translate(-50%, -50%); /* Start offscreen to prevent flashing */
+  backface-visibility: hidden; /* Prevent flickering during transitions */
+  -webkit-backface-visibility: hidden;
 }
 
 /* Cursor lines */
@@ -77,6 +82,8 @@
   opacity: 1;
   display: block !important;
   visibility: visible !important;
+  backface-visibility: hidden; /* Prevent flickering during transitions */
+  -webkit-backface-visibility: hidden;
 }
 
 /* Horizontal line */
@@ -598,20 +605,21 @@ main {
 @media (hover: none) or (pointer: coarse) {
   a,
   button,
-  .social-link,
-  [role="button"] {
+  [role="button"],
+  input,
+  select,
+  textarea {
     cursor: pointer !important;
-    -webkit-tap-highlight-color: rgba(
-      0,
-      0,
-      0,
-      0.1
-    ); /* Subtle feedback on tap */
   }
 
-  /* Slightly increase tap target sizes for better mobile UX */
+  .custom-cursor {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+
   .social-link {
-    transform: scale(1.1);
+    cursor: pointer !important;
   }
 
   .loading-overlay {
@@ -619,24 +627,38 @@ main {
   }
 }
 
-/* Update the cursor rules to not interfere with click interaction */
 @media (hover: hover) and (pointer: fine) {
   * {
     cursor: none !important;
   }
 
-  /* Make sure custom cursor is visible */
-  .custom-cursor,
-  .custom-cursor::before,
-  .custom-cursor::after {
+  .custom-cursor {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
+    pointer-events: none !important;
   }
 
-  /* Exception for loading screen */
   .loading-overlay {
-    cursor: pointer !important;
+    cursor: none !important;
+  }
+}
+
+.loading-overlay * {
+  cursor: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body {
+    cursor: none !important;
+  }
+
+  a,
+  button,
+  [role="button"],
+  .social-link {
+    cursor: none !important;
   }
 }
 
