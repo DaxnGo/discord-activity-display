@@ -11,7 +11,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Matthew | Front-End Developer",
-  description: "Personal portfolio of Matthew, a 17 y/o Front-End Developer",
+  description: "Personal portfolio website showcasing my work and skills.",
   icons: {
     icon: [{ url: "/favicon.ico", sizes: "any" }],
     shortcut: "/favicon.ico",
@@ -22,6 +22,9 @@ export const metadata: Metadata = {
     width: "device-width",
     initialScale: 1,
     minimumScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: "cover",
   },
   appleWebApp: {
     capable: true,
@@ -36,13 +39,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://matthew-dev.io/",
     title: "Matthew | Front-End Developer",
-    description: "Personal portfolio of Matthew, a 17 y/o Front-End Developer",
+    description: "Personal portfolio website showcasing my work and skills.",
     siteName: "Matthew | Front-End Developer",
   },
   twitter: {
     card: "summary_large_image",
     title: "Matthew | Front-End Developer",
-    description: "Personal portfolio of Matthew, a 17 y/o Front-End Developer",
+    description: "Personal portfolio website showcasing my work and skills.",
     creator: "@hellopassingby",
   },
 };

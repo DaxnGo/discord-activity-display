@@ -51,7 +51,7 @@
   transform-origin: center;
   top: 50%;
   left: 50%;
-  transition: none;
+  transition: all 0.2s ease;
 }
 
 /* Horizontal line */
@@ -78,17 +78,30 @@
   display: none;
 }
 
-/* Hover state via class (applied with JS) */
-.custom-cursor.hover::before {
+/* Hover state for regular buttons */
+.custom-cursor.hover:not(.social-hover)::before {
   width: 30px;
   height: 4px;
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-.custom-cursor.hover::after {
+.custom-cursor.hover:not(.social-hover)::after {
   width: 4px;
   height: 30px;
   transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Hover state for social links */
+.custom-cursor.social-hover::before {
+  width: 30px;
+  height: 3px;
+  transform: translate(-50%, -50%);
+}
+
+.custom-cursor.social-hover::after {
+  width: 3px;
+  height: 30px;
+  opacity: 0;
 }
 
 /* Loading page cursor - still using animation but optimized */

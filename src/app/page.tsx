@@ -166,6 +166,7 @@ export default function Home() {
         if (!hasEntered) {
           // Force remove hover class on loading page
           cursorRef.current.classList.remove("hover");
+          cursorRef.current.classList.remove("social-hover");
 
           // Find and force remove any pointer cursors
           const clickableElements = document.querySelectorAll(
@@ -176,16 +177,22 @@ export default function Home() {
           });
         } else {
           // Regular cursor behavior for main page
+          const isOverSocial =
+            e.target &&
+            (e.target as HTMLElement).closest(".social-link") !== null;
+
           const isOverClickable =
             e.target &&
             ((e.target as HTMLElement).tagName === "A" ||
               (e.target as HTMLElement).closest("a") ||
               (e.target as HTMLElement).closest('[role="button"]'));
 
-          if (isOverClickable) {
+          cursorRef.current.classList.remove("hover", "social-hover");
+
+          if (isOverSocial) {
+            cursorRef.current.classList.add("social-hover");
+          } else if (isOverClickable) {
             cursorRef.current.classList.add("hover");
-          } else {
-            cursorRef.current.classList.remove("hover");
           }
         }
       }
