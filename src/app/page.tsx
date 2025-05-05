@@ -40,48 +40,12 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
   const toRef = useRef<HTMLSpanElement>(null);
   const enterRef = useRef<HTMLSpanElement>(null);
   const cursorRef = useRef<HTMLSpanElement>(null);
-  const customCursorRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Initialize custom cursor for loading screen
-    if (typeof window !== "undefined") {
-      const isTouchDevice =
-        "ontouchstart" in window ||
-        navigator.maxTouchPoints > 0 ||
-        (navigator as any).msMaxTouchPoints > 0;
-
-      const hasCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
-
-      // Only set up cursor for desktop devices
-      if (!isTouchDevice && !hasCoarsePointer) {
-        // Create cursor element if needed
-        const cursorEl = document.createElement("div");
-        cursorEl.className = "custom-cursor";
-        cursorEl.style.opacity = "1";
-        cursorEl.style.visibility = "visible";
-        cursorEl.style.display = "block";
-        cursorEl.style.zIndex = "9999999";
-        document.body.appendChild(cursorEl);
-        customCursorRef.current = cursorEl;
-      }
-
-      // Handle mouse movement
-      const handleMouseMove = (e: MouseEvent) => {
-        if (customCursorRef.current) {
-          customCursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-          customCursorRef.current.style.opacity = "1";
-          customCursorRef.current.style.visibility = "visible";
-          customCursorRef.current.style.display = "block";
-        }
-      };
-
-      window.addEventListener("mousemove", handleMouseMove);
-
-      return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        // Don't remove the cursor element, let the main component manage it
-      };
-    }
+    // No cursor creation logic here - leave it to the parent component
+    return () => {
+      // No cursor-related cleanup needed here
+    };
   }, []);
 
   useEffect(() => {
@@ -402,6 +366,15 @@ export default function Home() {
     // Only run on client side
     if (typeof window === "undefined" || isMobileDevice) return;
 
+    // Make sure we only have one cursor element
+    const existingCursors = document.querySelectorAll(".custom-cursor");
+    existingCursors.forEach((cursor, index) => {
+      // Keep only the one referenced by cursorRef
+      if (index > 0 || cursor !== cursorRef.current) {
+        cursor.parentNode?.removeChild(cursor);
+      }
+    });
+
     const handleMouseMove = (e: MouseEvent) => {
       if (!cursorRef.current) return;
 
@@ -448,6 +421,13 @@ export default function Home() {
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+
+      // On cleanup, ensure all cursor elements are properly removed
+      document.querySelectorAll(".custom-cursor").forEach((cursor) => {
+        if (cursor !== cursorRef.current) {
+          cursor.parentNode?.removeChild(cursor);
+        }
+      });
     };
   }, [isMobileDevice]);
 
@@ -572,11 +552,21 @@ export default function Home() {
 
   // Add this near the beginning of your Home component
   useEffect(() => {
-    // Ensure cursor is visible immediately on page load
+    // Ensure cursor is visible immediately on page load and only one exists
     if (cursorRef.current && !isMobileDevice) {
       cursorRef.current.style.opacity = "1";
+
+      // Clean up any duplicate cursors that might exist
+      const cursors = document.querySelectorAll(".custom-cursor");
+      if (cursors.length > 1) {
+        cursors.forEach((cursor, index) => {
+          if (cursor !== cursorRef.current) {
+            cursor.parentNode?.removeChild(cursor);
+          }
+        });
+      }
     }
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, [isMobileDevice]); // Add isMobileDevice dependency
 
   // Add this useEffect right before the return statement
   useEffect(() => {
@@ -700,7 +690,7 @@ export default function Home() {
               <DiscordActivity />
             </Suspense>
 
-            {/* Social Links */}
+            {/* Social Links - Ensuring this section is properly defined with improved visibility */}
             <div className="flex justify-center space-x-5 mt-6 profile-item">
               <a
                 href="https://www.instagram.com/miws_10/"
