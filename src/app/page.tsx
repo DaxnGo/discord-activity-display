@@ -28,25 +28,14 @@ const ViewCounter = dynamic(() => import("@/components/ViewCounter"), {
 // Initial loading state
 const LoadingScreen = ({ onClick }: { onClick: () => void }) => (
   <div className="loading-overlay" onClick={onClick}>
-    <div className="text-center px-4">
-      <h1 className="text-white text-4xl md:text-5xl font-bold mb-2 tracking-wide typewriter-text">
-        <span className="inline-block animate-pulse">click</span>
-        <span
-          className="inline-block mx-2"
-          style={{ animation: "pulseText 2s infinite 0.3s" }}>
-          to
-        </span>
-        <span
-          className="inline-block"
-          style={{ animation: "pulseText 2s infinite 0.6s" }}>
-          enter...
-        </span>
+    <div className="text-center px-6 py-8 glass-card">
+      <h1 className="text-white text-4xl md:text-6xl font-bold mb-4 tracking-wide">
+        <span className="inline-block">click </span>
+        <span className="inline-block mx-2">to </span>
+        <span className="inline-block">enter</span>
+        <span className="inline-block ml-1">_</span>
       </h1>
-      <p
-        className="text-white/40 text-sm mt-4"
-        style={{ animation: "pulseText 3s infinite" }}>
-        portfolio & personal space
-      </p>
+      <p className="text-white/60 text-lg mt-6">portfolio & personal space</p>
     </div>
   </div>
 );
@@ -134,21 +123,8 @@ export default function Home() {
 
   // Optimize event handlers
   const handleEnterClick = useCallback(() => {
+    // Simply set hasEntered to true
     setHasEntered(true);
-    if (loaderTextRef.current) {
-      gsap.to(loaderTextRef.current, {
-        opacity: 0,
-        y: -10,
-        duration: 0.8,
-        ease: "power3.out",
-      });
-
-      gsap.to(".loading-overlay", {
-        opacity: 0,
-        duration: 1.2,
-        ease: "power3.out",
-      });
-    }
   }, []);
 
   const handleVolumeChange = useCallback((muted: boolean) => {
@@ -159,54 +135,45 @@ export default function Home() {
     setVolumeLevel(level);
   }, []);
 
-  // Cursor mouse movement handler
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!cursorRef.current || isMobileDevice) return;
-
-      requestAnimationFrame(() => {
-        if (cursorRef.current) {
-          cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-          cursorRef.current.style.opacity = "1";
-
-          const isOverSocial =
-            e.target && (e.target as HTMLElement).closest(".social-link");
-          const isOverClickable =
-            e.target &&
-            ((e.target as HTMLElement).tagName === "A" ||
-              (e.target as HTMLElement).closest("a") ||
-              (e.target as HTMLElement).closest('[role="button"]'));
-
-          cursorRef.current.classList.remove("hover", "social-hover");
-          if (isOverSocial) {
-            cursorRef.current.classList.add("social-hover");
-          } else if (isOverClickable) {
-            cursorRef.current.classList.add("hover");
-          }
-        }
-      });
-    },
-    [isMobileDevice]
-  );
-
-  // Set up cursor event listeners
+  // Cursor initialization and refresh functionality
   useEffect(() => {
-    if (isMobileDevice) return;
+    // Only run on client side
+    if (typeof window === "undefined" || isMobileDevice) return;
 
-    document.body.classList.add("using-custom-cursor");
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!cursorRef.current) return;
 
-    // Initialize cursor position at center of screen
+      cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+
+      const isOverSocial =
+        e.target && (e.target as HTMLElement).closest(".social-link");
+      const isOverClickable =
+        e.target &&
+        ((e.target as HTMLElement).tagName === "A" ||
+          (e.target as HTMLElement).closest("a") ||
+          (e.target as HTMLElement).closest('[role="button"]'));
+
+      cursorRef.current.classList.remove("hover", "social-hover");
+      if (isOverSocial) {
+        cursorRef.current.classList.add("social-hover");
+      } else if (isOverClickable) {
+        cursorRef.current.classList.add("hover");
+      }
+    };
+
+    // Initialize cursor
     if (cursorRef.current) {
-      cursorRef.current.style.transform = `translate(${window.innerWidth / 2}px, ${window.innerHeight / 2}px) translate(-50%, -50%)`;
       cursorRef.current.style.opacity = "1";
+      cursorRef.current.style.display = "block";
     }
+
+    // Add event listener
+    window.addEventListener("mousemove", handleMouseMove);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      document.body.classList.remove("using-custom-cursor");
     };
-  }, [handleMouseMove, isMobileDevice]);
+  }, [isMobileDevice]);
 
   // Apply hover animations directly
   useEffect(() => {

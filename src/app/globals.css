@@ -17,8 +17,14 @@
 
 /* Force custom cursor on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
-  * {
+  html body * {
     cursor: none !important;
+  }
+
+  html body .custom-cursor {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Exception for loading overlay */
@@ -35,7 +41,7 @@
   }
 }
 
-/* Custom cursor styling */
+/* Custom cursor styling - make cursor more visible */
 .custom-cursor {
   position: fixed;
   width: 30px;
@@ -47,6 +53,10 @@
   left: 0;
   opacity: 1 !important;
   transition: opacity 0.3s ease;
+  mix-blend-mode: difference;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+  display: block !important;
+  visibility: visible !important;
 }
 
 /* Cursor lines */
@@ -59,6 +69,9 @@
   top: 50%;
   left: 50%;
   transition: all 0.2s ease;
+  opacity: 1;
+  display: block !important;
+  visibility: visible !important;
 }
 
 /* Horizontal line */
@@ -140,6 +153,41 @@
 
 .typewriter-text span {
   display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.blink-cursor {
+  color: #fff;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.glass-card {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.fade-in {
+  animation: fadeIn 2s ease-in;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* Add specific styles for all elements inside the loading overlay */

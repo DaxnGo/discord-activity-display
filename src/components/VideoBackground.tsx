@@ -59,9 +59,7 @@ export default function VideoBackground({
           className="absolute top-0 left-0 w-full h-full object-cover"
           loop
           muted={isMuted}
-          playsInline
-          poster="/images/poster.jpg" // Add a lightweight poster image
-        >
+          playsInline>
           <source src={videoSource} type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-black/50" /> {/* Overlay */}
