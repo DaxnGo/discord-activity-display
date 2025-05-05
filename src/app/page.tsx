@@ -687,9 +687,9 @@ export default function Home() {
                   ease: [0.22, 1, 0.36, 1],
                 }}
                 style={{
-                  opacity: "1 !important",
-                  visibility: "visible !important",
-                  display: "block !important",
+                  opacity: 1,
+                  visibility: "visible",
+                  display: "block",
                   textShadow: "0 0 10px rgba(255, 255, 255, 0.7)",
                   zIndex: 99,
                   position: "relative",
@@ -725,9 +725,9 @@ export default function Home() {
             <div
               className="flex justify-center space-x-5 mt-6 profile-item opacity-100"
               style={{
-                display: "flex !important",
-                opacity: "1 !important",
-                visibility: "visible !important",
+                display: "flex",
+                opacity: 1,
+                visibility: "visible",
                 zIndex: 99,
                 position: "relative",
               }}>
