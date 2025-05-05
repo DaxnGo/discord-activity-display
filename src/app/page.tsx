@@ -214,7 +214,7 @@ export default function Home() {
 
   // Video settings
   const lofiVideoId = "jfKfPfyJRdk"; // YouTube ID as fallback
-  const localVideoPath = "/videos/蒼のワルツ - Eve MV (3).mp4"; // Path to your actual video file
+  const localVideoPath = "/videos/blue-waltz.mp4"; // Path to your actual video file
   const useLocalVideo = true; // Set to true to use local video, false for YouTube
 
   // Optimize mobile detection

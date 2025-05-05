@@ -72,7 +72,9 @@ export default function RootLayout({
           }
         `}</style>
       </head>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body
+        className={`${inter.variable} font-sans antialiased`}
+        suppressHydrationWarning>
         <AnimationProvider>{children}</AnimationProvider>
         <SpeedInsights />
         <Analytics />
