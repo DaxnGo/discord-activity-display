@@ -505,7 +505,7 @@ export default function Home() {
           />
 
           {/* View Counter */}
-          <div className="absolute bottom-4 left-4 z-20 text-white/50 text-xs">
+          <div className="fixed bottom-6 left-6 z-50 text-white/80 text-xs hover:scale-105 transition-transform duration-300">
             <ViewCounter />
           </div>
         </main>
