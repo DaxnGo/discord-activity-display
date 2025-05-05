@@ -658,11 +658,8 @@ export default function Home() {
                 ref={titleRef}
                 data-text="Matthew"
                 className="text-5xl font-bold mb-2 profile-item name-gradient text-glow"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{
-                  opacity: isContentReady ? 1 : 0,
-                  y: isContentReady ? 0 : -20,
-                }}
+                initial={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{
                   duration: 0.8,
                   ease: [0.22, 1, 0.36, 1],
@@ -671,8 +668,8 @@ export default function Home() {
               </motion.h1>
               <motion.p
                 className="text-md profile-item"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isContentReady ? 1 : 0 }}
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
                 transition={{
                   delay: 0.4,
                   duration: 0.8,
@@ -686,12 +683,13 @@ export default function Home() {
               fallback={
                 <div className="h-[200px] animate-pulse bg-white/10 rounded-lg" />
               }>
-              {isContentReady && <DiscordActivity />}
+              <div style={{ position: "relative", zIndex: 1 }}>
+                {isContentReady && <DiscordActivity />}
+              </div>
             </Suspense>
 
             {/* Social Links - Ensuring this section is properly defined with improved visibility */}
-            <div
-              className={`flex justify-center space-x-5 mt-6 profile-item ${isContentReady ? "opacity-100" : "opacity-0"} transition-opacity duration-500`}>
+            <div className="flex justify-center space-x-5 mt-6 profile-item opacity-100">
               <a
                 href="https://www.instagram.com/miws_10/"
                 target="_blank"

@@ -15,6 +15,23 @@
   --discord-lighter: 54, 57, 63;
 }
 
+/* Force display for important UI elements */
+.name-gradient,
+.gradient-text,
+.profile-item,
+.social-link {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  z-index: 10;
+}
+
+.flex.justify-center.space-x-5 {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 /* Force custom cursor on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   html body * {
@@ -648,26 +665,6 @@ main {
   cursor: none !important;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  html,
-  body {
-    cursor: none !important;
-  }
-
-  a,
-  button,
-  [role="button"],
-  .social-link {
-    cursor: none !important;
-  }
-}
-
-/* Add specific styles for all elements inside the loading overlay */
-.loading-overlay * {
-  cursor: pointer !important;
-}
-
-/* Make this CSS rule more specific to override browser defaults */
 @media (hover: hover) and (pointer: fine) {
   html,
   body,
