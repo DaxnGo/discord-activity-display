@@ -56,7 +56,7 @@ export default function VideoBackground({
         className={`fixed inset-0 -z-10 transition-opacity duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`}>
         <video
           ref={videoRef}
-          className="absolute top-0 left-0 w-full h-full object-cover scale-[1.1]"
+          className="absolute top-0 left-0 w-full h-full object-cover"
           loop
           muted={isMuted}
           playsInline

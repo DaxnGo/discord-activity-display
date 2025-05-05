@@ -15,7 +15,7 @@
   --discord-lighter: 54, 57, 63;
 }
 
-/* Update the Force custom cursor everywhere rule to only apply on non-touch devices */
+/* Force custom cursor on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   *:not(.loading-overlay *) {
     cursor: none !important;
@@ -23,13 +23,13 @@
 }
 
 /* Hide custom cursor on mobile/touch devices */
-@media (hover: none) or (pointer: coarse) {
+@media (hover: none), (pointer: coarse) {
   .custom-cursor {
     display: none !important;
   }
 }
 
-/* Custom cursor - ensure smooth transition between screens */
+/* Custom cursor styling */
 .custom-cursor {
   position: fixed;
   width: 30px;
@@ -39,10 +39,11 @@
   will-change: transform;
   top: 0;
   left: 0;
-  transition: opacity 0.3s ease;
   opacity: 1 !important;
+  transition: opacity 0.3s ease;
 }
 
+/* Cursor lines */
 .custom-cursor::before,
 .custom-cursor::after {
   content: "";

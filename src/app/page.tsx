@@ -145,7 +145,7 @@ export default function Home() {
     setVolumeLevel(level);
   }, []);
 
-  // Optimize cursor movement with throttling
+  // Cursor mouse movement handler
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!cursorRef.current || isMobileDevice) return;
@@ -155,37 +155,27 @@ export default function Home() {
           cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
           cursorRef.current.style.opacity = "1";
 
-          if (!hasEntered) {
-            cursorRef.current.classList.remove("hover", "social-hover");
-            const clickableElements = document.querySelectorAll(
-              'a, button, [role="button"], .loading-overlay, .loading-overlay *'
-            );
-            clickableElements.forEach((el) => {
-              (el as HTMLElement).style.cursor = "none";
-            });
-          } else {
-            const isOverSocial =
-              e.target && (e.target as HTMLElement).closest(".social-link");
-            const isOverClickable =
-              e.target &&
-              ((e.target as HTMLElement).tagName === "A" ||
-                (e.target as HTMLElement).closest("a") ||
-                (e.target as HTMLElement).closest('[role="button"]'));
+          const isOverSocial =
+            e.target && (e.target as HTMLElement).closest(".social-link");
+          const isOverClickable =
+            e.target &&
+            ((e.target as HTMLElement).tagName === "A" ||
+              (e.target as HTMLElement).closest("a") ||
+              (e.target as HTMLElement).closest('[role="button"]'));
 
-            cursorRef.current.classList.remove("hover", "social-hover");
-            if (isOverSocial) {
-              cursorRef.current.classList.add("social-hover");
-            } else if (isOverClickable) {
-              cursorRef.current.classList.add("hover");
-            }
+          cursorRef.current.classList.remove("hover", "social-hover");
+          if (isOverSocial) {
+            cursorRef.current.classList.add("social-hover");
+          } else if (isOverClickable) {
+            cursorRef.current.classList.add("hover");
           }
         }
       });
     },
-    [hasEntered, isMobileDevice]
+    [isMobileDevice]
   );
 
-  // Optimize event listener setup
+  // Set up cursor event listeners
   useEffect(() => {
     if (isMobileDevice) return;
 
@@ -307,7 +297,6 @@ export default function Home() {
 
   return (
     <>
-      {/* Only render the custom cursor for non-mobile devices */}
       {!isMobileDevice && <div ref={cursorRef} className="custom-cursor"></div>}
 
       <main className="relative min-h-screen w-full flex flex-col items-center justify-center text-white inset-0 overflow-hidden">
