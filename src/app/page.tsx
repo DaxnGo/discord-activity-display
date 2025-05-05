@@ -680,11 +680,13 @@ export default function Home() {
           ref={cardRef}
           className="z-10 px-4 sm:px-5 py-6 sm:py-8 max-w-md w-full perspective-1000">
           <div className="profile-card bg-black/30 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-6 sm:p-8 transition-all duration-500 profile-item">
-            <div className="mb-4 sm:mb-6 text-center">
+            <div
+              className="mb-1 sm:mb-2 text-center"
+              style={{ marginBottom: "1.5rem" }}>
               <motion.h1
                 ref={titleRef}
                 data-text="Matthew"
-                className="text-5xl font-bold mb-2 profile-item name-gradient text-glow"
+                className="text-5xl font-bold mb-1 profile-item name-gradient text-glow"
                 initial={{ opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
@@ -708,6 +710,10 @@ export default function Home() {
                 transition={{
                   delay: 0.4,
                   duration: 0.8,
+                }}
+                style={{
+                  position: "relative",
+                  zIndex: 30,
                 }}>
                 <span className="text-sm gradient-text inline-block">
                   <span className="font-medium">{age}</span> y/o Front-End
