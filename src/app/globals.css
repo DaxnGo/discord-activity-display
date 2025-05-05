@@ -512,17 +512,17 @@ body {
   -webkit-text-fill-color: transparent;
   text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
   letter-spacing: 0.5px;
-  padding: 4px 10px;
+  padding: 8px 14px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background-color: rgba(0, 0, 0, 0.3);
   display: inline-block;
   backdrop-filter: blur(4px);
   font-weight: 500;
-  margin-top: 0; /* Reset to 0 to remove any negative margin */
-  margin-bottom: 5px; /* Add slight bottom margin */
+  margin-top: 0;
+  margin-bottom: 0;
   position: relative;
-  z-index: 20; /* Higher z-index to ensure it stays above other elements */
+  z-index: 20;
 }
 
 .gradient-text .font-medium {

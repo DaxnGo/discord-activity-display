@@ -681,7 +681,7 @@ export default function Home() {
           className="z-10 px-4 sm:px-5 py-6 sm:py-8 max-w-md w-full perspective-1000">
           <div className="profile-card bg-black/30 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-6 sm:p-8 transition-all duration-500 profile-item">
             {/* Header Section with Name and Age */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <motion.h1
                 ref={titleRef}
                 data-text="Matthew"
@@ -699,7 +699,8 @@ export default function Home() {
                   textShadow: "0 0 10px rgba(255, 255, 255, 0.7)",
                   zIndex: 99,
                   position: "relative",
-                  marginBottom: "12px" /* Space between name and age */,
+                  marginBottom:
+                    "18px" /* Increased space between name and age */,
                 }}>
                 Matthew
               </motion.h1>
@@ -714,6 +715,7 @@ export default function Home() {
                 style={{
                   position: "relative",
                   zIndex: 30,
+                  paddingBottom: "18px" /* Added space below the age */,
                 }}>
                 <span className="text-sm gradient-text inline-block">
                   <span className="font-medium">{age}</span> y/o Front-End
