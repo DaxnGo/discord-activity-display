@@ -52,18 +52,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
-        <link
-          rel="preload"
-          href="https://avatars.githubusercontent.com/u/83614613?v=4"
-          as="image"
-          type="image/jpeg"
-        />
-        <link
-          rel="preload"
-          href="/images/poster.jpg"
-          as="image"
-          type="image/jpeg"
-        />
         <style>{`
           /* Critical CSS */
           body {
