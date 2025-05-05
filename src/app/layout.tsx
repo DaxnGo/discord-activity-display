@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AnimationProvider } from "@/context/AnimationContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -86,6 +87,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased`}>
         <AnimationProvider>{children}</AnimationProvider>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
