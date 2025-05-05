@@ -206,6 +206,7 @@ export default function Home() {
   const [volumeLevel, setVolumeLevel] = useState(0.5);
   const [hasEntered, setHasEntered] = useState(false);
   const [age, setAge] = useState(17);
+  const [isContentReady, setIsContentReady] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
   const loaderTextRef = useRef<HTMLDivElement>(null);
   const { isLoaded } = useAnimation();
@@ -361,31 +362,109 @@ export default function Home() {
     setVolumeLevel(level);
   }, []);
 
-  // Add initialization for loading screen cursor
+  // Cursor initialization for both loading screen and main page
   useEffect(() => {
-    if (typeof window === "undefined" || isMobileDevice || hasEntered) return;
+    if (typeof window === "undefined" || isMobileDevice) return;
 
-    const initCursor = () => {
+    const handleMouseMove = (e: MouseEvent) => {
       if (!cursorRef.current) return;
 
-      const updateCursorPosition = (e: MouseEvent) => {
-        if (!cursorRef.current) return;
-        cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-      };
+      // Use requestAnimationFrame for smoother cursor movement
+      requestAnimationFrame(() => {
+        if (cursorRef.current) {
+          cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
 
-      // Start cursor at center of screen
-      cursorRef.current.style.transform = `translate(${window.innerWidth / 2}px, ${window.innerHeight / 2}px) translate(-50%, -50%)`;
+          // Force visibility
+          cursorRef.current.style.opacity = "1";
+          cursorRef.current.style.display = "block";
+          cursorRef.current.style.visibility = "visible";
+        }
+      });
 
-      // Add event listener for mouse movement
-      window.addEventListener("mousemove", updateCursorPosition);
+      // Check for links/buttons for hover states
+      const isOverSocial =
+        e.target && (e.target as HTMLElement).closest(".social-link");
+      const isOverClickable =
+        e.target &&
+        ((e.target as HTMLElement).tagName === "A" ||
+          (e.target as HTMLElement).closest("a") ||
+          (e.target as HTMLElement).closest('[role="button"]'));
 
-      return () =>
-        window.removeEventListener("mousemove", updateCursorPosition);
+      if (cursorRef.current) {
+        cursorRef.current.classList.remove("hover", "social-hover");
+        if (isOverSocial) {
+          cursorRef.current.classList.add("social-hover");
+        } else if (isOverClickable) {
+          cursorRef.current.classList.add("hover");
+        }
+      }
     };
 
-    const cleanup = initCursor();
-    return cleanup;
-  }, [isMobileDevice, hasEntered]);
+    // Initialize cursor position at center of screen
+    if (cursorRef.current) {
+      cursorRef.current.style.opacity = "1";
+      cursorRef.current.style.display = "block";
+      cursorRef.current.style.visibility = "visible";
+      cursorRef.current.style.transform = `translate(${window.innerWidth / 2}px, ${window.innerHeight / 2}px) translate(-50%, -50%)`;
+    }
+
+    // Add event listener
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, [isMobileDevice]); // Only depend on isMobileDevice, not hasEntered
+
+  // Add this to your component
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Create a style element that will force cursor: none and add custom cursor styles
+    const styleEl = document.createElement("style");
+    styleEl.textContent = `
+      .loading-overlay, .loading-overlay *, 
+      body * {
+        cursor: none !important;
+      }
+      
+      .custom-cursor {
+        position: fixed;
+        width: 24px;
+        height: 24px;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999999;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s, height 0.2s, border-color 0.2s;
+      }
+      
+      .custom-cursor.hover {
+        width: 60px;
+        height: 60px;
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+      
+      .custom-cursor.social-hover {
+        width: 40px;
+        height: 40px;
+        border-color: #5865f2;
+      }
+    `;
+    document.head.appendChild(styleEl);
+
+    // When user enters, add class to body
+    if (hasEntered) {
+      document.body.classList.add("has-entered");
+    } else {
+      document.body.classList.remove("has-entered");
+    }
+
+    return () => {
+      document.head.removeChild(styleEl);
+    };
+  }, [hasEntered]);
 
   // Enhanced main page animation setup
   useEffect(() => {
@@ -506,91 +585,17 @@ export default function Home() {
     };
   }, [isLoaded, hasEntered]);
 
-  // Add this near the beginning of your Home component
+  // Force hydration completion detection
   useEffect(() => {
-    // Ensure cursor is visible immediately on page load and only one exists
-    if (cursorRef.current && !isMobileDevice) {
-      cursorRef.current.style.opacity = "1";
+    if (typeof window !== "undefined") {
+      // Set a slight delay to ensure DOM is fully hydrated
+      const timer = setTimeout(() => {
+        setIsContentReady(true);
+      }, 100);
 
-      // Clean up any duplicate cursors that might exist
-      const cursors = document.querySelectorAll(".custom-cursor");
-      if (cursors.length > 1) {
-        cursors.forEach((cursor, index) => {
-          if (cursor !== cursorRef.current) {
-            cursor.parentNode?.removeChild(cursor);
-          }
-        });
-      }
+      return () => clearTimeout(timer);
     }
-  }, [isMobileDevice]); // Add isMobileDevice dependency
-
-  // Add this useEffect right before the return statement
-  useEffect(() => {
-    // Only run on client side and when not entered yet
-    if (typeof window === "undefined" || hasEntered) return;
-
-    // Helper function to remove hand cursors
-    const removeHandCursors = () => {
-      // Target all elements that might have a hand cursor
-      const elements = document.querySelectorAll(
-        '.loading-overlay, .loading-overlay *, [role="button"]'
-      );
-      elements.forEach((el) => {
-        (el as HTMLElement).style.cursor = "none";
-      });
-    };
-
-    // Run immediately
-    removeHandCursors();
-
-    // Also run on a small delay to catch any updates
-    const timerId = setTimeout(removeHandCursors, 100);
-
-    // Clean up
-    return () => clearTimeout(timerId);
-  }, [hasEntered]);
-
-  // Add this to your component
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    // Create a style element that will force cursor: none
-    const styleEl = document.createElement("style");
-    styleEl.textContent = `
-      .loading-overlay, .loading-overlay * {
-        cursor: none !important;
-      }
-      
-      body:not(.has-entered) * {
-        cursor: none !important;
-      }
-      
-      .custom-cursor {
-        position: fixed;
-        width: 20px;
-        height: 20px;
-        background-color: rgba(255, 255, 255, 0.7);
-        border-radius: 50%;
-        pointer-events: none;
-        mix-blend-mode: difference;
-        z-index: 9999999;
-        transform: translate(-50%, -50%);
-        transition: width 0.2s, height 0.2s, background-color 0.2s;
-      }
-    `;
-    document.head.appendChild(styleEl);
-
-    // When user enters, add class to body
-    if (hasEntered) {
-      document.body.classList.add("has-entered");
-    } else {
-      document.body.classList.remove("has-entered");
-    }
-
-    return () => {
-      document.head.removeChild(styleEl);
-    };
-  }, [hasEntered]);
+  }, []);
 
   // When not entered show loading screen
   if (!hasEntered) {
@@ -606,16 +611,6 @@ export default function Home() {
               display: "block",
               zIndex: 9999999,
               position: "fixed",
-              width: "20px",
-              height: "20px",
-              backgroundColor: "rgba(255, 255, 255, 0.7)",
-              borderRadius: "50%",
-              pointerEvents: "none",
-              mixBlendMode: "difference",
-              transform: "translate(-50%, -50%)",
-              transition: "width 0.2s, height 0.2s, background-color 0.2s",
-              top: 0,
-              left: 0,
             }}></div>
         )}
         <LoadingScreen onClick={handleEnterClick} />
@@ -634,6 +629,7 @@ export default function Home() {
             visibility: "visible",
             display: "block",
             zIndex: 9999999,
+            position: "fixed",
           }}></div>
       )}
 
@@ -663,7 +659,10 @@ export default function Home() {
                 data-text="Matthew"
                 className="text-5xl font-bold mb-2 profile-item name-gradient text-glow"
                 initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
+                animate={{
+                  opacity: isContentReady ? 1 : 0,
+                  y: isContentReady ? 0 : -20,
+                }}
                 transition={{
                   duration: 0.8,
                   ease: [0.22, 1, 0.36, 1],
@@ -673,7 +672,7 @@ export default function Home() {
               <motion.p
                 className="text-md profile-item"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                animate={{ opacity: isContentReady ? 1 : 0 }}
                 transition={{
                   delay: 0.4,
                   duration: 0.8,
@@ -687,11 +686,12 @@ export default function Home() {
               fallback={
                 <div className="h-[200px] animate-pulse bg-white/10 rounded-lg" />
               }>
-              <DiscordActivity />
+              {isContentReady && <DiscordActivity />}
             </Suspense>
 
             {/* Social Links - Ensuring this section is properly defined with improved visibility */}
-            <div className="flex justify-center space-x-5 mt-6 profile-item">
+            <div
+              className={`flex justify-center space-x-5 mt-6 profile-item ${isContentReady ? "opacity-100" : "opacity-0"} transition-opacity duration-500`}>
               <a
                 href="https://www.instagram.com/miws_10/"
                 target="_blank"
