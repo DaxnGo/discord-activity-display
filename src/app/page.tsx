@@ -26,19 +26,148 @@ const ViewCounter = dynamic(() => import("@/components/ViewCounter"), {
 });
 
 // Initial loading state
-const LoadingScreen = ({ onClick }: { onClick: () => void }) => (
-  <div className="loading-overlay" onClick={onClick}>
-    <div className="text-center px-6 py-8 glass-card">
-      <h1 className="text-white text-4xl md:text-6xl font-bold mb-4 tracking-wide">
-        <span className="inline-block">click </span>
-        <span className="inline-block mx-2">to </span>
-        <span className="inline-block">enter</span>
-        <span className="inline-block ml-1">_</span>
-      </h1>
-      <p className="text-white/60 text-lg mt-6">portfolio & personal space</p>
+const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const subTextRef = useRef<HTMLParagraphElement>(null);
+  const clickRef = useRef<HTMLSpanElement>(null);
+  const toRef = useRef<HTMLSpanElement>(null);
+  const enterRef = useRef<HTMLSpanElement>(null);
+  const cursorRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    // Create a timeline
+    const tl = gsap.timeline({ repeat: -1 });
+
+    // Animate the heading parts
+    tl.from(clickRef.current, {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      ease: "back.out(1.7)",
+    })
+      .from(
+        toRef.current,
+        {
+          opacity: 0,
+          y: 20,
+          duration: 0.6,
+          ease: "back.out(1.7)",
+        },
+        "-=0.3"
+      )
+      .from(
+        enterRef.current,
+        {
+          opacity: 0,
+          y: 20,
+          duration: 0.6,
+          ease: "back.out(1.7)",
+        },
+        "-=0.3"
+      )
+      .from(
+        cursorRef.current,
+        {
+          opacity: 0,
+          duration: 0.3,
+        },
+        "-=0.1"
+      );
+
+    // Blinking cursor effect
+    gsap.to(cursorRef.current, {
+      opacity: 0,
+      duration: 0.5,
+      repeat: -1,
+      yoyo: true,
+      ease: "steps(1)",
+    });
+
+    // Subtle hover effect on the card
+    const card = containerRef.current;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!card) return;
+
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const moveX = (x - centerX) / 20;
+      const moveY = (y - centerY) / 20;
+
+      gsap.to(card, {
+        rotationY: moveX,
+        rotationX: -moveY,
+        transformPerspective: 1000,
+        ease: "power2.out",
+        duration: 0.5,
+      });
+    };
+
+    const handleMouseLeave = () => {
+      gsap.to(card, {
+        rotationY: 0,
+        rotationX: 0,
+        duration: 0.7,
+        ease: "elastic.out(1, 0.5)",
+      });
+    };
+
+    card.addEventListener("mousemove", handleMouseMove);
+    card.addEventListener("mouseleave", handleMouseLeave);
+
+    // Subtle glow animation on subtext
+    gsap.to(subTextRef.current, {
+      textShadow: "0 0 10px rgba(255, 255, 255, 0.7)",
+      repeat: -1,
+      yoyo: true,
+      duration: 2,
+      ease: "sine.inOut",
+    });
+
+    return () => {
+      card.removeEventListener("mousemove", handleMouseMove);
+      card.removeEventListener("mouseleave", handleMouseLeave);
+      tl.kill();
+    };
+  }, []);
+
+  return (
+    <div className="loading-overlay" onClick={onClick}>
+      <div
+        ref={containerRef}
+        className="text-center px-8 py-10 glass-card transform-gpu"
+        style={{ transformStyle: "preserve-3d" }}>
+        <h1
+          ref={headingRef}
+          className="text-white text-5xl md:text-6xl font-bold mb-6 tracking-wide select-none">
+          <span ref={clickRef} className="inline-block">
+            click{" "}
+          </span>
+          <span ref={toRef} className="inline-block mx-2">
+            to{" "}
+          </span>
+          <span ref={enterRef} className="inline-block">
+            enter
+          </span>
+          <span ref={cursorRef} className="inline-block ml-1 text-[#5865f2]">
+            _
+          </span>
+        </h1>
+        <p ref={subTextRef} className="text-white/70 text-lg mt-6 select-none">
+          portfolio & personal space
+        </p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function Home() {
   const [isMobileDevice, setIsMobileDevice] = useState(false);
@@ -123,8 +252,40 @@ export default function Home() {
 
   // Optimize event handlers
   const handleEnterClick = useCallback(() => {
-    // Simply set hasEntered to true
-    setHasEntered(true);
+    const overlay = document.querySelector(".loading-overlay");
+    const card = document.querySelector(".glass-card");
+
+    if (overlay && card) {
+      // Create an exit timeline
+      const exitTl = gsap.timeline({
+        onComplete: () => {
+          // Only set hasEntered to true after animation completes
+          setHasEntered(true);
+        },
+      });
+
+      // First scale and fade the card
+      exitTl.to(card, {
+        scale: 1.1,
+        opacity: 0,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+
+      // Then fade out the overlay
+      exitTl.to(
+        overlay,
+        {
+          opacity: 0,
+          duration: 0.8,
+          ease: "power2.inOut",
+        },
+        "-=0.3"
+      );
+    } else {
+      // Fallback if elements aren't found
+      setHasEntered(true);
+    }
   }, []);
 
   const handleVolumeChange = useCallback((muted: boolean) => {

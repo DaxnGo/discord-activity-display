@@ -162,6 +162,7 @@
   margin-left: 4px;
 }
 
+/* Glass card effect */
 .glass-card {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(12px);
@@ -169,62 +170,58 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.glass-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.4;
 }
 
-.fade-in {
-  animation: fadeIn 2s ease-in;
+.glass-card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 80%
+  );
+  opacity: 0;
+  transform: scale(0.8);
+  z-index: -1;
+  pointer-events: none;
+  transition:
+    opacity 0.5s,
+    transform 0.5s;
 }
 
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+.glass-card:hover::after {
+  opacity: 1;
+  transform: scale(1);
 }
 
-/* Add specific styles for all elements inside the loading overlay */
-.loading-overlay * {
-  cursor: pointer !important;
-}
-
-/* Make this CSS rule more specific to override browser defaults */
-@media (hover: hover) and (pointer: fine) {
-  html,
-  body,
-  *:not(input):not(textarea):not(select):not(.loading-overlay *),
-  *:not(input):not(textarea):not(select):not(.loading-overlay *)::before,
-  *:not(input):not(textarea):not(select):not(.loading-overlay *)::after {
-    cursor: none !important;
-  }
-}
-
-/* Prevent multiple clicks during transition */
-.pointer-events-none {
-  pointer-events: none !important;
-}
-
-/* Improved fade animation for loading page */
-@keyframes fadeInOut {
-  0% {
-    opacity: 0.5;
-    filter: blur(0.5px);
-  }
-  50% {
-    opacity: 1;
-    filter: blur(0);
-  }
-  100% {
-    opacity: 0.5;
-    filter: blur(0.5px);
-  }
+/* Transform GPU */
+.transform-gpu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 /* Loading screen text animation */
@@ -578,5 +575,56 @@ main {
   /* Exception for loading screen */
   .loading-overlay {
     cursor: pointer !important;
+  }
+}
+
+/* Add specific styles for all elements inside the loading overlay */
+.loading-overlay * {
+  cursor: pointer !important;
+}
+
+/* Make this CSS rule more specific to override browser defaults */
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body,
+  *:not(input):not(textarea):not(select):not(.loading-overlay *),
+  *:not(input):not(textarea):not(select):not(.loading-overlay *)::before,
+  *:not(input):not(textarea):not(select):not(.loading-overlay *)::after {
+    cursor: none !important;
+  }
+}
+
+/* Prevent multiple clicks during transition */
+.pointer-events-none {
+  pointer-events: none !important;
+}
+
+/* Improved fade animation for loading page */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0.5;
+    filter: blur(0.5px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0.5;
+    filter: blur(0.5px);
+  }
+}
+
+/* Loading screen animations */
+.fade-in {
+  animation: fadeIn 2s ease-in;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
