@@ -15,21 +15,58 @@
   --discord-lighter: 54, 57, 63;
 }
 
-/* Force display for important UI elements */
+/* Force visibility for important elements */
 .name-gradient,
-.gradient-text,
-.profile-item,
-.social-link {
+.social-container,
+.social-link,
+.profile-item {
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;
   z-index: 10;
+  position: relative;
 }
 
-.flex.justify-center.space-x-5 {
+/* Ensure social container displays as flex */
+.social-container {
   display: flex !important;
   opacity: 1 !important;
   visibility: visible !important;
+  z-index: 100 !important;
+  position: relative !important;
+}
+
+/* Ensure social links display properly */
+.social-link {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* When body has content-ready class, force visibility */
+body.content-ready .name-gradient,
+body.content-ready .social-container,
+body.content-ready .social-link,
+body.content-ready .profile-item {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+body.content-ready .social-container {
+  display: flex !important;
+}
+
+/* Prevent animation restart on volume controls */
+.music-controls * {
+  animation: none !important;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease !important;
+}
+
+.music-controls button:active {
+  transform: scale(0.95);
 }
 
 /* Force custom cursor on non-touch devices */

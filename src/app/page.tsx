@@ -193,7 +193,7 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
           </span>
         </h1>
         <p ref={subTextRef} className="text-white/70 text-lg mt-6 select-none">
-          portfolio & personal space
+          Curious about me?
         </p>
       </div>
     </div>
@@ -588,20 +588,22 @@ export default function Home() {
   // Force hydration completion detection
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Set content ready immediately on mount
-      setIsContentReady(true);
+      // Set a short delay to ensure DOM is fully hydrated before showing content
+      setTimeout(() => {
+        setIsContentReady(true);
 
-      // Force visibility of key elements
-      const forceSocialMediaVisibility = () => {
-        const socialMedia = document.querySelector(
-          ".flex.justify-center.space-x-5"
-        );
+        // Add a class to the body to indicate that content is ready
+        document.body.classList.add("content-ready");
+
+        // Directly manipulate DOM elements to ensure visibility
+        const socialLinks = document.querySelectorAll(".social-link");
         const nameElement = document.querySelector(".name-gradient");
+        const socialContainer = document.querySelector(".social-container");
 
-        if (socialMedia) {
-          socialMedia.setAttribute(
+        if (socialContainer) {
+          socialContainer.setAttribute(
             "style",
-            "display: flex !important; opacity: 1 !important; visibility: visible !important; z-index: 20;"
+            "display: flex !important; opacity: 1 !important; visibility: visible !important; z-index: 100; position: relative;"
           );
         }
 
@@ -611,11 +613,14 @@ export default function Home() {
             "opacity: 1 !important; visibility: visible !important; display: block !important;"
           );
         }
-      };
 
-      // Call immediately and after a slight delay to ensure DOM is ready
-      forceSocialMediaVisibility();
-      setTimeout(forceSocialMediaVisibility, 500);
+        socialLinks.forEach((link) => {
+          link.setAttribute(
+            "style",
+            "display: flex !important; opacity: 1 !important; visibility: visible !important;"
+          );
+        });
+      }, 200);
     }
   }, [hasEntered]);
 
@@ -723,7 +728,7 @@ export default function Home() {
 
             {/* Social Links - Ensuring this section is properly defined with improved visibility */}
             <div
-              className="flex justify-center space-x-5 mt-6 profile-item opacity-100"
+              className="flex justify-center space-x-5 mt-6 profile-item opacity-100 social-container"
               style={{
                 display: "flex",
                 opacity: 1,

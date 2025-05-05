@@ -61,7 +61,7 @@ export default function MusicControls({
 
   return (
     <div
-      className={`fixed ${isMobile ? "bottom-16 right-4" : "bottom-4 right-4"} z-30 flex items-center gap-2`}>
+      className={`fixed ${isMobile ? "bottom-16 right-4" : "bottom-4 right-4"} z-30 flex items-center gap-2 music-controls`}>
       {/* Volume slider - shown when button is clicked */}
       {showVolumeSlider && (
         <div
