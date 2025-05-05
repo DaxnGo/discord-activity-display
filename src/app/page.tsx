@@ -682,7 +682,7 @@ export default function Home() {
           <div className="profile-card bg-black/30 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-6 sm:p-8 transition-all duration-500 profile-item">
             <div
               className="mb-1 sm:mb-2 text-center"
-              style={{ marginBottom: "1.5rem" }}>
+              style={{ marginBottom: "0.5rem" }}>
               <motion.h1
                 ref={titleRef}
                 data-text="Matthew"
@@ -700,6 +700,7 @@ export default function Home() {
                   textShadow: "0 0 10px rgba(255, 255, 255, 0.7)",
                   zIndex: 99,
                   position: "relative",
+                  marginBottom: "-5px" /* Reduce space after name */,
                 }}>
                 Matthew
               </motion.h1>
@@ -712,10 +713,14 @@ export default function Home() {
                   duration: 0.8,
                 }}
                 style={{
+                  marginBottom: "40px",
                   position: "relative",
                   zIndex: 30,
+                  marginTop: "-40px",
                 }}>
-                <span className="text-sm gradient-text inline-block">
+                <span
+                  className="text-sm gradient-text inline-block"
+                  style={{ transform: "translateY(-30px)" }}>
                   <span className="font-medium">{age}</span> y/o Front-End
                   Developer
                 </span>
