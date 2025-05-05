@@ -361,75 +361,31 @@ export default function Home() {
     setVolumeLevel(level);
   }, []);
 
-  // Cursor initialization and refresh functionality
+  // Add initialization for loading screen cursor
   useEffect(() => {
-    // Only run on client side
-    if (typeof window === "undefined" || isMobileDevice) return;
+    if (typeof window === "undefined" || isMobileDevice || hasEntered) return;
 
-    // Make sure we only have one cursor element
-    const existingCursors = document.querySelectorAll(".custom-cursor");
-    existingCursors.forEach((cursor, index) => {
-      // Keep only the one referenced by cursorRef
-      if (index > 0 || cursor !== cursorRef.current) {
-        cursor.parentNode?.removeChild(cursor);
-      }
-    });
-
-    const handleMouseMove = (e: MouseEvent) => {
+    const initCursor = () => {
       if (!cursorRef.current) return;
 
-      // Use requestAnimationFrame for smoother cursor movement
-      requestAnimationFrame(() => {
-        if (cursorRef.current) {
-          cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+      const updateCursorPosition = (e: MouseEvent) => {
+        if (!cursorRef.current) return;
+        cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+      };
 
-          // Force visibility
-          cursorRef.current.style.opacity = "1";
-          cursorRef.current.style.display = "block";
-          cursorRef.current.style.visibility = "visible";
-        }
-      });
-
-      const isOverSocial =
-        e.target && (e.target as HTMLElement).closest(".social-link");
-      const isOverClickable =
-        e.target &&
-        ((e.target as HTMLElement).tagName === "A" ||
-          (e.target as HTMLElement).closest("a") ||
-          (e.target as HTMLElement).closest('[role="button"]'));
-
-      if (cursorRef.current) {
-        cursorRef.current.classList.remove("hover", "social-hover");
-        if (isOverSocial) {
-          cursorRef.current.classList.add("social-hover");
-        } else if (isOverClickable) {
-          cursorRef.current.classList.add("hover");
-        }
-      }
-    };
-
-    // Initialize cursor position at center of screen
-    if (cursorRef.current) {
-      cursorRef.current.style.opacity = "1";
-      cursorRef.current.style.display = "block";
-      cursorRef.current.style.visibility = "visible";
+      // Start cursor at center of screen
       cursorRef.current.style.transform = `translate(${window.innerWidth / 2}px, ${window.innerHeight / 2}px) translate(-50%, -50%)`;
-    }
 
-    // Add event listener
-    window.addEventListener("mousemove", handleMouseMove);
+      // Add event listener for mouse movement
+      window.addEventListener("mousemove", updateCursorPosition);
 
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-
-      // On cleanup, ensure all cursor elements are properly removed
-      document.querySelectorAll(".custom-cursor").forEach((cursor) => {
-        if (cursor !== cursorRef.current) {
-          cursor.parentNode?.removeChild(cursor);
-        }
-      });
+      return () =>
+        window.removeEventListener("mousemove", updateCursorPosition);
     };
-  }, [isMobileDevice]);
+
+    const cleanup = initCursor();
+    return cleanup;
+  }, [isMobileDevice, hasEntered]);
 
   // Enhanced main page animation setup
   useEffect(() => {
@@ -601,8 +557,25 @@ export default function Home() {
     // Create a style element that will force cursor: none
     const styleEl = document.createElement("style");
     styleEl.textContent = `
-      .loading-overlay, .loading-overlay *, body:not(.has-entered) * {
+      .loading-overlay, .loading-overlay * {
         cursor: none !important;
+      }
+      
+      body:not(.has-entered) * {
+        cursor: none !important;
+      }
+      
+      .custom-cursor {
+        position: fixed;
+        width: 20px;
+        height: 20px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        pointer-events: none;
+        mix-blend-mode: difference;
+        z-index: 9999999;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s, height 0.2s, background-color 0.2s;
       }
     `;
     document.head.appendChild(styleEl);
@@ -619,8 +592,35 @@ export default function Home() {
     };
   }, [hasEntered]);
 
+  // When not entered show loading screen
   if (!hasEntered) {
-    return <LoadingScreen onClick={handleEnterClick} />;
+    return (
+      <>
+        {!isMobileDevice && (
+          <div
+            ref={cursorRef}
+            className="custom-cursor"
+            style={{
+              opacity: 1,
+              visibility: "visible",
+              display: "block",
+              zIndex: 9999999,
+              position: "fixed",
+              width: "20px",
+              height: "20px",
+              backgroundColor: "rgba(255, 255, 255, 0.7)",
+              borderRadius: "50%",
+              pointerEvents: "none",
+              mixBlendMode: "difference",
+              transform: "translate(-50%, -50%)",
+              transition: "width 0.2s, height 0.2s, background-color 0.2s",
+              top: 0,
+              left: 0,
+            }}></div>
+        )}
+        <LoadingScreen onClick={handleEnterClick} />
+      </>
+    );
   }
 
   return (
