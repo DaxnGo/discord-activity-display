@@ -4,7 +4,7 @@ import { useLanyard } from "@/hooks/useLanyard";
 import { useState, useEffect, useRef } from "react";
 import { Music } from "lucide-react";
 import { useCardAnimation } from "@/hooks/useCardAnimation";
-import gsap from "gsap";
+import { gsap } from "gsap";
 
 // Set your Discord ID here
 const DISCORD_ID = "915440078573154324";
@@ -21,46 +21,116 @@ export default function DiscordActivity() {
 
   // Update elapsed time counter
   useEffect(() => {
-    // Only log Discord data for debugging in development mode and limit frequency
-    if (
-      discordData &&
-      process.env.NODE_ENV === "development" &&
-      Math.random() < 0.1
-    ) {
-      console.log("Current Discord data:", discordData);
+    let timer: NodeJS.Timeout;
+
+    if (discordData && discordData.currentActivity?.startTime) {
+      setCurrentElapsed(discordData.elapsedTime);
+
+      timer = setInterval(() => {
+        setCurrentElapsed((prev) => prev + 1);
+      }, 1000);
     }
 
-    if (error) {
-      console.error("Discord connection error:", error);
-      setDebugInfo(`Error connecting: ${error.message}`);
-    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [discordData]);
 
-    if (!discordData || !discordData.currentActivity?.startTime) {
-      return;
-    }
-
-    setCurrentElapsed(discordData.elapsedTime);
-
-    const timer = setInterval(() => {
-      setCurrentElapsed((prev) => prev + 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [discordData, error]);
-
-  // Status dot animation
+  // Status dot animation with enhanced effects
   useEffect(() => {
+    let animation: gsap.core.Timeline | gsap.core.Tween;
+
     if (statusDotRef.current && discordData?.user?.status === "online") {
-      gsap.to(statusDotRef.current, {
+      // Create a sequence of animations for a more dynamic effect
+      const tl = gsap.timeline({ repeat: -1 });
+
+      // Pulse animation
+      tl.to(statusDotRef.current, {
         scale: 1.2,
+        opacity: 0.9,
+        duration: 0.8,
+        ease: "sine.inOut",
+      }).to(statusDotRef.current, {
+        scale: 1,
         opacity: 0.7,
-        duration: 1.2,
+        duration: 0.8,
+        ease: "sine.inOut",
+      });
+
+      // Add a subtle glow effect
+      const glowAnimation = gsap.to(statusDotRef.current, {
+        boxShadow: "0 0 12px rgba(35, 165, 90, 0.8)",
+        duration: 1.5,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
       });
+
+      animation = tl;
+
+      return () => {
+        tl.kill();
+        glowAnimation.kill();
+      };
     }
+
+    return () => {
+      if (animation) animation.kill();
+    };
   }, [discordData]);
+
+  // Add entrance animation for the Discord card
+  useEffect(() => {
+    if (cardRef.current && discordData && !loading) {
+      // Create a staggered entrance animation
+      const tl = gsap.timeline();
+
+      // Main card entrance
+      tl.fromTo(
+        cardRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }
+      );
+
+      // Animate internal elements with stagger
+      tl.fromTo(
+        ".animate-item",
+        { y: 15, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "back.out(1.7)",
+        },
+        "-=0.3"
+      );
+
+      // Special animation for avatar
+      if (discordData.user) {
+        const avatar = cardRef.current.querySelector(".avatar-container");
+        if (avatar) {
+          tl.fromTo(
+            avatar,
+            { scale: 0.8, rotate: -5 },
+            { scale: 1, rotate: 0, duration: 0.7, ease: "elastic.out(1, 0.5)" },
+            "-=0.5"
+          );
+        }
+      }
+
+      // For activity sections, add a reveal animation
+      const activityCard = cardRef.current.querySelector(".activity-card");
+      if (activityCard) {
+        tl.fromTo(
+          activityCard,
+          { scaleY: 0, transformOrigin: "top" },
+          { scaleY: 1, duration: 0.5, ease: "power3.out" },
+          "-=0.3"
+        );
+      }
+    }
+  }, [discordData, loading]);
 
   // Status color mapping
   const statusColors = {
@@ -189,7 +259,7 @@ export default function DiscordActivity() {
       ref={cardRef}
       className="bg-gradient-to-br from-[#2b2d31] to-[#1e1f22] rounded-xl p-5 text-left w-full shadow-xl border border-white/5 backdrop-blur-md transition-all duration-300 hover:shadow-2xl">
       <div className="flex items-center mb-5 animate-item">
-        <div className="relative w-14 h-14 mr-4">
+        <div className="relative w-14 h-14 mr-4 avatar-container">
           <div className="w-14 h-14 rounded-full bg-gray-800 overflow-hidden ring-2 ring-white/10 shadow-lg">
             <img
               src={user.avatarUrl}
@@ -215,7 +285,7 @@ export default function DiscordActivity() {
 
       {/* Spotify activity takes precedence */}
       {spotify ? (
-        <div className="bg-gradient-to-r from-[#1DB954]/20 to-[#191414]/20 backdrop-blur-md rounded-lg p-4 text-sm transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item">
+        <div className="bg-gradient-to-r from-[#1DB954]/20 to-[#191414]/20 backdrop-blur-md rounded-lg p-4 text-sm transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item activity-card">
           <div className="text-xs font-medium text-[#1DB954] mb-2 uppercase tracking-wider">
             Listening to Spotify
           </div>
@@ -242,7 +312,7 @@ export default function DiscordActivity() {
           </div>
         </div>
       ) : currentActivity ? (
-        <div className="bg-gradient-to-r from-[#5865F2]/20 to-[#313338]/20 backdrop-blur-md rounded-lg p-4 text-sm transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item">
+        <div className="bg-gradient-to-r from-[#5865F2]/20 to-[#313338]/20 backdrop-blur-md rounded-lg p-4 text-sm transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item activity-card">
           <div className="text-xs font-medium text-[#5865F2] mb-2 uppercase tracking-wider">
             {currentActivity.type}
           </div>
@@ -282,7 +352,7 @@ export default function DiscordActivity() {
           </div>
         </div>
       ) : (
-        <div className="bg-[#36393f]/80 backdrop-blur-md rounded-lg p-4 text-sm text-center py-6 animate-item shadow-md">
+        <div className="bg-[#36393f]/80 backdrop-blur-md rounded-lg p-4 text-sm text-center py-6 animate-item activity-card shadow-md">
           <div className="text-gray-400 flex items-center justify-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
