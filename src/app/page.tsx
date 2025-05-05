@@ -4,8 +4,14 @@ import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useAnimation } from "@/context/AnimationContext";
 import { useCardAnimation } from "@/hooks/useCardAnimation";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
+
+// Register GSAP plugins
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // Lazy load non-critical components
 const MusicControls = dynamic(() => import("@/components/MusicControls"), {
@@ -34,59 +40,104 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
   const toRef = useRef<HTMLSpanElement>(null);
   const enterRef = useRef<HTMLSpanElement>(null);
   const cursorRef = useRef<HTMLSpanElement>(null);
+  const customCursorRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    // Initialize custom cursor for loading screen
+    if (typeof window !== "undefined") {
+      const isTouchDevice =
+        "ontouchstart" in window ||
+        navigator.maxTouchPoints > 0 ||
+        (navigator as any).msMaxTouchPoints > 0;
+
+      const hasCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
+
+      // Only set up cursor for desktop devices
+      if (!isTouchDevice && !hasCoarsePointer) {
+        // Create cursor element if needed
+        const cursorEl = document.createElement("div");
+        cursorEl.className = "custom-cursor";
+        cursorEl.style.opacity = "1";
+        cursorEl.style.visibility = "visible";
+        cursorEl.style.display = "block";
+        cursorEl.style.zIndex = "9999999";
+        document.body.appendChild(cursorEl);
+        customCursorRef.current = cursorEl;
+      }
+
+      // Handle mouse movement
+      const handleMouseMove = (e: MouseEvent) => {
+        if (customCursorRef.current) {
+          customCursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+          customCursorRef.current.style.opacity = "1";
+          customCursorRef.current.style.visibility = "visible";
+          customCursorRef.current.style.display = "block";
+        }
+      };
+
+      window.addEventListener("mousemove", handleMouseMove);
+
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+        // Don't remove the cursor element, let the main component manage it
+      };
+    }
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Create a timeline
+    // Create a more advanced timeline with better easing
     const tl = gsap.timeline({ repeat: -1 });
 
-    // Animate the heading parts
+    // Enhanced heading animations with staggered effects
     tl.from(clickRef.current, {
       opacity: 0,
       y: 20,
-      duration: 0.6,
-      ease: "back.out(1.7)",
+      duration: 0.7,
+      ease: "elastic.out(1, 0.75)",
     })
       .from(
         toRef.current,
         {
           opacity: 0,
           y: 20,
-          duration: 0.6,
-          ease: "back.out(1.7)",
+          duration: 0.7,
+          ease: "elastic.out(1, 0.75)",
         },
-        "-=0.3"
+        "-=0.4"
       )
       .from(
         enterRef.current,
         {
           opacity: 0,
           y: 20,
-          duration: 0.6,
-          ease: "back.out(1.7)",
+          duration: 0.7,
+          ease: "elastic.out(1, 0.75)",
         },
-        "-=0.3"
+        "-=0.4"
       )
       .from(
         cursorRef.current,
         {
           opacity: 0,
+          scale: 0.8,
           duration: 0.3,
+          ease: "power2.out",
         },
         "-=0.1"
       );
 
-    // Blinking cursor effect
+    // More modern blinking cursor effect
     gsap.to(cursorRef.current, {
       opacity: 0,
       duration: 0.5,
       repeat: -1,
       yoyo: true,
-      ease: "steps(1)",
+      ease: "power2.inOut",
     });
 
-    // Subtle hover effect on the card
+    // Enhanced hover effect on the card
     const card = containerRef.current;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -99,15 +150,20 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      const moveX = (x - centerX) / 20;
-      const moveY = (y - centerY) / 20;
+      // Increased sensitivity for more noticeable effect
+      const moveX = (x - centerX) / 15;
+      const moveY = (y - centerY) / 15;
 
       gsap.to(card, {
         rotationY: moveX,
         rotationX: -moveY,
         transformPerspective: 1000,
         ease: "power2.out",
-        duration: 0.5,
+        duration: 0.4,
+        boxShadow: `
+          ${-moveX * 0.5}px ${moveY * 0.5}px 20px rgba(0, 0, 0, 0.2),
+          0 10px 30px rgba(0, 0, 0, 0.5)
+        `,
       });
     };
 
@@ -116,16 +172,27 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
         rotationY: 0,
         rotationX: 0,
         duration: 0.7,
-        ease: "elastic.out(1, 0.5)",
+        ease: "elastic.out(1, 0.75)",
+        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
       });
     };
+
+    // Add ambient glow animation to enhance the atmosphere
+    gsap.to(card, {
+      boxShadow:
+        "0 10px 30px rgba(88, 101, 242, 0.3), 0 10px 30px rgba(0, 0, 0, 0.5)",
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
 
     card.addEventListener("mousemove", handleMouseMove);
     card.addEventListener("mouseleave", handleMouseLeave);
 
-    // Subtle glow animation on subtext
+    // More pronounced glow animation on subtext
     gsap.to(subTextRef.current, {
-      textShadow: "0 0 10px rgba(255, 255, 255, 0.7)",
+      textShadow: "0 0 15px rgba(255, 255, 255, 0.9)",
       repeat: -1,
       yoyo: true,
       duration: 2,
@@ -250,35 +317,69 @@ export default function Home() {
     };
   }, []);
 
-  // Optimize event handlers
+  // Enhanced entrance animation
   const handleEnterClick = useCallback(() => {
     const overlay = document.querySelector(".loading-overlay");
     const card = document.querySelector(".glass-card");
 
     if (overlay && card) {
-      // Create an exit timeline
+      // Create a more dramatic exit timeline
       const exitTl = gsap.timeline({
         onComplete: () => {
-          // Only set hasEntered to true after animation completes
           setHasEntered(true);
         },
       });
 
-      // First scale and fade the card
-      exitTl.to(card, {
-        scale: 1.1,
-        opacity: 0,
-        duration: 0.6,
-        ease: "power2.out",
-      });
+      // Add a flash effect before scaling
+      exitTl
+        .to(card, {
+          boxShadow: "0 0 30px rgba(255, 255, 255, 0.8)",
+          duration: 0.2,
+        })
+        .to(
+          card,
+          {
+            scale: 1.15,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power3.out",
+          },
+          "-=0.1"
+        );
 
-      // Then fade out the overlay
+      // Then fade out the overlay with a radial wipe effect
       exitTl.to(
         overlay,
         {
           opacity: 0,
-          duration: 0.8,
+          duration: 1,
           ease: "power2.inOut",
+          onStart: () => {
+            // Create a radial wipe effect
+            const wipe = document.createElement("div");
+            wipe.style.position = "fixed";
+            wipe.style.top = "50%";
+            wipe.style.left = "50%";
+            wipe.style.transform = "translate(-50%, -50%)";
+            wipe.style.width = "10px";
+            wipe.style.height = "10px";
+            wipe.style.borderRadius = "50%";
+            wipe.style.background =
+              "radial-gradient(circle, rgba(88, 101, 242, 0.3) 0%, transparent 70%)";
+            wipe.style.zIndex = "9998";
+            document.body.appendChild(wipe);
+
+            gsap.to(wipe, {
+              width: "300vw",
+              height: "300vh",
+              opacity: 0,
+              duration: 1.5,
+              ease: "power3.out",
+              onComplete: () => {
+                document.body.removeChild(wipe);
+              },
+            });
+          },
         },
         "-=0.3"
       );
@@ -304,7 +405,17 @@ export default function Home() {
     const handleMouseMove = (e: MouseEvent) => {
       if (!cursorRef.current) return;
 
-      cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+      // Use requestAnimationFrame for smoother cursor movement
+      requestAnimationFrame(() => {
+        if (cursorRef.current) {
+          cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+
+          // Force visibility
+          cursorRef.current.style.opacity = "1";
+          cursorRef.current.style.display = "block";
+          cursorRef.current.style.visibility = "visible";
+        }
+      });
 
       const isOverSocial =
         e.target && (e.target as HTMLElement).closest(".social-link");
@@ -314,18 +425,22 @@ export default function Home() {
           (e.target as HTMLElement).closest("a") ||
           (e.target as HTMLElement).closest('[role="button"]'));
 
-      cursorRef.current.classList.remove("hover", "social-hover");
-      if (isOverSocial) {
-        cursorRef.current.classList.add("social-hover");
-      } else if (isOverClickable) {
-        cursorRef.current.classList.add("hover");
+      if (cursorRef.current) {
+        cursorRef.current.classList.remove("hover", "social-hover");
+        if (isOverSocial) {
+          cursorRef.current.classList.add("social-hover");
+        } else if (isOverClickable) {
+          cursorRef.current.classList.add("hover");
+        }
       }
     };
 
-    // Initialize cursor
+    // Initialize cursor position at center of screen
     if (cursorRef.current) {
       cursorRef.current.style.opacity = "1";
       cursorRef.current.style.display = "block";
+      cursorRef.current.style.visibility = "visible";
+      cursorRef.current.style.transform = `translate(${window.innerWidth / 2}px, ${window.innerHeight / 2}px) translate(-50%, -50%)`;
     }
 
     // Add event listener
@@ -336,47 +451,122 @@ export default function Home() {
     };
   }, [isMobileDevice]);
 
-  // Apply hover animations directly
+  // Enhanced main page animation setup
   useEffect(() => {
     if (!isLoaded || !hasEntered) return;
 
-    const elements = document.querySelectorAll(".social-link");
+    // Create a master timeline for page entrance
+    const masterTl = gsap.timeline();
 
-    const enterListeners = new Map();
-    const leaveListeners = new Map();
-
-    elements.forEach((el) => {
-      const enterListener = () => {
-        gsap.to(el, { scale: 1.05, duration: 0.3, ease: "power2.out" });
-      };
-
-      const leaveListener = () => {
-        gsap.to(el, { scale: 1, duration: 0.3, ease: "power2.out" });
-      };
-
-      enterListeners.set(el, enterListener);
-      leaveListeners.set(el, leaveListener);
-
-      el.addEventListener("mouseenter", enterListener);
-      el.addEventListener("mouseleave", leaveListener);
+    // Staggered entrance for profile elements
+    masterTl.from(".profile-item", {
+      y: 30,
+      opacity: 0,
+      stagger: 0.15,
+      duration: 0.8,
+      ease: "power3.out",
     });
 
-    // Title glow effect
+    // Staggered entrance for social links with scale effect
+    masterTl.from(
+      ".social-link",
+      {
+        scale: 0,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.6,
+        ease: "back.out(1.7)",
+      },
+      "-=0.4"
+    );
+
+    // More pronounced hover animations for social links
+    const socialLinks = document.querySelectorAll(".social-link");
+    socialLinks.forEach((link) => {
+      const icon = link.querySelector("svg");
+
+      link.addEventListener("mouseenter", () => {
+        gsap.to(link, {
+          scale: 1.15,
+          duration: 0.3,
+          ease: "back.out(1.7)",
+          boxShadow: "0 10px 20px rgba(0, 0, 0, 0.3)",
+        });
+        if (icon) {
+          gsap.to(icon, {
+            scale: 1.2,
+            rotation: 5,
+            duration: 0.4,
+            ease: "power2.out",
+          });
+        }
+      });
+
+      link.addEventListener("mouseleave", () => {
+        gsap.to(link, {
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out",
+          boxShadow: "none",
+        });
+        if (icon) {
+          gsap.to(icon, {
+            scale: 1,
+            rotation: 0,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        }
+      });
+    });
+
+    // Title glow effect with improved dynamics
     if (titleRef.current) {
       gsap.to(titleRef.current, {
-        textShadow: "0 0 15px rgba(255, 255, 255, 0.6)",
-        duration: 2,
+        textShadow: "0 0 20px rgba(255, 255, 255, 0.8)",
+        duration: 2.5,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
       });
     }
 
-    return () => {
-      elements.forEach((el) => {
-        el.removeEventListener("mouseenter", enterListeners.get(el));
-        el.removeEventListener("mouseleave", leaveListeners.get(el));
+    // Profile card hover effect
+    const profileCard = document.querySelector(".profile-card");
+    if (profileCard) {
+      profileCard.addEventListener("mouseenter", () => {
+        gsap.to(profileCard, {
+          y: -8,
+          rotateX: 2,
+          boxShadow:
+            "0 15px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(88, 101, 242, 0.3)",
+          duration: 0.4,
+          ease: "power2.out",
+        });
       });
+
+      profileCard.addEventListener("mouseleave", () => {
+        gsap.to(profileCard, {
+          y: 0,
+          rotateX: 0,
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+          duration: 0.7,
+          ease: "elastic.out(1, 0.75)",
+        });
+      });
+    }
+
+    return () => {
+      // Clean up event listeners
+      socialLinks.forEach((link) => {
+        link.removeEventListener("mouseenter", () => {});
+        link.removeEventListener("mouseleave", () => {});
+      });
+
+      if (profileCard) {
+        profileCard.removeEventListener("mouseenter", () => {});
+        profileCard.removeEventListener("mouseleave", () => {});
+      }
     };
   }, [isLoaded, hasEntered]);
 
@@ -445,7 +635,17 @@ export default function Home() {
 
   return (
     <>
-      {!isMobileDevice && <div ref={cursorRef} className="custom-cursor"></div>}
+      {!isMobileDevice && (
+        <div
+          ref={cursorRef}
+          className="custom-cursor"
+          style={{
+            opacity: 1,
+            visibility: "visible",
+            display: "block",
+            zIndex: 9999999,
+          }}></div>
+      )}
 
       <main className="relative min-h-screen w-full flex flex-col items-center justify-center text-white inset-0 overflow-hidden">
         <Suspense fallback={<div className="fixed inset-0 bg-black" />}>
@@ -462,7 +662,7 @@ export default function Home() {
           <ParticleBackground />
         </Suspense>
 
-        {/* Content */}
+        {/* Content with enhanced animations */}
         <div
           ref={cardRef}
           className="z-10 px-4 sm:px-5 py-6 sm:py-8 max-w-md w-full perspective-1000">
