@@ -588,14 +588,36 @@ export default function Home() {
   // Force hydration completion detection
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Set a slight delay to ensure DOM is fully hydrated
-      const timer = setTimeout(() => {
-        setIsContentReady(true);
-      }, 100);
+      // Set content ready immediately on mount
+      setIsContentReady(true);
 
-      return () => clearTimeout(timer);
+      // Force visibility of key elements
+      const forceSocialMediaVisibility = () => {
+        const socialMedia = document.querySelector(
+          ".flex.justify-center.space-x-5"
+        );
+        const nameElement = document.querySelector(".name-gradient");
+
+        if (socialMedia) {
+          socialMedia.setAttribute(
+            "style",
+            "display: flex !important; opacity: 1 !important; visibility: visible !important; z-index: 20;"
+          );
+        }
+
+        if (nameElement) {
+          nameElement.setAttribute(
+            "style",
+            "opacity: 1 !important; visibility: visible !important; display: block !important;"
+          );
+        }
+      };
+
+      // Call immediately and after a slight delay to ensure DOM is ready
+      forceSocialMediaVisibility();
+      setTimeout(forceSocialMediaVisibility, 500);
     }
-  }, []);
+  }, [hasEntered]);
 
   // When not entered show loading screen
   if (!hasEntered) {
@@ -663,6 +685,14 @@ export default function Home() {
                 transition={{
                   duration: 0.8,
                   ease: [0.22, 1, 0.36, 1],
+                }}
+                style={{
+                  opacity: "1 !important",
+                  visibility: "visible !important",
+                  display: "block !important",
+                  textShadow: "0 0 10px rgba(255, 255, 255, 0.7)",
+                  zIndex: 99,
+                  position: "relative",
                 }}>
                 Matthew
               </motion.h1>
@@ -684,18 +714,30 @@ export default function Home() {
                 <div className="h-[200px] animate-pulse bg-white/10 rounded-lg" />
               }>
               <div style={{ position: "relative", zIndex: 1 }}>
-                {isContentReady && <DiscordActivity />}
+                {/* Ensure Discord Activity doesn't block other elements */}
+                <div style={{ opacity: 0.99 }}>
+                  {isContentReady && <DiscordActivity />}
+                </div>
               </div>
             </Suspense>
 
             {/* Social Links - Ensuring this section is properly defined with improved visibility */}
-            <div className="flex justify-center space-x-5 mt-6 profile-item opacity-100">
+            <div
+              className="flex justify-center space-x-5 mt-6 profile-item opacity-100"
+              style={{
+                display: "flex !important",
+                opacity: "1 !important",
+                visibility: "visible !important",
+                zIndex: 99,
+                position: "relative",
+              }}>
               <a
                 href="https://www.instagram.com/miws_10/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-link w-10 h-10 flex items-center justify-center bg-white/10 rounded-full hover:bg-pink-500/80 transition-all duration-300 group"
-                aria-label="Instagram">
+                aria-label="Instagram"
+                style={{ display: "flex", visibility: "visible", opacity: 1 }}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -717,7 +759,8 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-link w-10 h-10 flex items-center justify-center bg-white/10 rounded-full hover:bg-purple-500/80 transition-all duration-300 group"
-                aria-label="GitHub">
+                aria-label="GitHub"
+                style={{ display: "flex", visibility: "visible", opacity: 1 }}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"

@@ -204,6 +204,18 @@ export default function DiscordActivity() {
     );
   };
 
+  // Force the component to be visible
+  useEffect(() => {
+    // Make sure this component is properly styled to be visible
+    const component = document.querySelector(".discord-activity-wrapper");
+    if (component) {
+      component.setAttribute(
+        "style",
+        "opacity: 1; visibility: visible; z-index: 10; position: relative; display: block;"
+      );
+    }
+  }, []);
+
   if (loading) {
     return (
       <div
@@ -256,121 +268,131 @@ export default function DiscordActivity() {
 
   return (
     <div
-      ref={cardRef}
-      className="bg-gradient-to-br from-[#2b2d31] to-[#1e1f22] rounded-xl p-5 text-left w-full shadow-xl border border-white/5 backdrop-blur-md transition-all duration-300 hover:shadow-2xl">
-      <div className="flex items-center mb-5 animate-item">
-        <div className="relative w-14 h-14 mr-4 avatar-container">
-          <div className="w-14 h-14 rounded-full bg-gray-800 overflow-hidden ring-2 ring-white/10 shadow-lg">
-            <img
-              src={user.avatarUrl}
-              alt={`${user.username}'s Avatar`}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div
-            ref={statusDotRef}
-            className={`absolute -bottom-1 -right-1 w-5 h-5 ${
-              statusColors[user.status]
-            } rounded-full border-2 border-[#1e1f22] shadow-glow`}></div>
-        </div>
-        <div>
-          <div className="font-bold text-lg">{user.username}</div>
-          <div className="text-sm opacity-80 capitalize flex items-center">
-            <span
-              className={`inline-block w-2 h-2 rounded-full ${statusColors[user.status]} mr-2`}></span>
-            {user.status}
-          </div>
-        </div>
-      </div>
-
-      {/* Spotify activity takes precedence */}
-      {spotify ? (
-        <div className="bg-gradient-to-r from-[#1DB954]/20 to-[#191414]/20 backdrop-blur-md rounded-lg p-4 text-sm transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item activity-card">
-          <div className="text-xs font-medium text-[#1DB954] mb-2 uppercase tracking-wider">
-            Listening to Spotify
-          </div>
-          <div className="flex items-center">
-            {getActivityIcon()}
-            <div className="flex-1 min-w-0">
-              <div className="font-bold text-white truncate">
-                {spotify.song}
-              </div>
-              <div className="text-xs text-gray-300 truncate">
-                by {spotify.artist}
-              </div>
-              <div className="text-xs text-gray-400 truncate">
-                on {spotify.album}
-              </div>
-            </div>
-          </div>
-          <div className="mt-3 h-1 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[#1DB954] rounded-full"
-              style={{
-                width: `${((Date.now() - spotify.startTime) / (spotify.endTime - spotify.startTime)) * 100}%`,
-              }}></div>
-          </div>
-        </div>
-      ) : currentActivity ? (
-        <div className="bg-gradient-to-r from-[#5865F2]/20 to-[#313338]/20 backdrop-blur-md rounded-lg p-4 text-sm transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item activity-card">
-          <div className="text-xs font-medium text-[#5865F2] mb-2 uppercase tracking-wider">
-            {currentActivity.type}
-          </div>
-          <div className="flex items-center">
-            {getActivityIcon()}
-            <div className="flex-1 min-w-0">
-              <div className="font-bold text-white truncate">
-                {currentActivity.name}
-              </div>
-              {currentActivity.details && (
-                <div className="text-xs text-gray-300 truncate">
-                  {currentActivity.details}
-                </div>
-              )}
-              {currentActivity.state && (
-                <div className="text-xs text-gray-400 truncate">
-                  {currentActivity.state}
-                </div>
-              )}
-              <div className="text-xs text-[#b9bbbe] mt-1 flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3 w-3 mr-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                {formatTime(currentElapsed)} elapsed
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="bg-[#36393f]/80 backdrop-blur-md rounded-lg p-4 text-sm text-center py-6 animate-item activity-card shadow-md">
-          <div className="text-gray-400 flex items-center justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2 opacity-60"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      className="discord-activity-wrapper"
+      style={{
+        opacity: 1,
+        visibility: "visible",
+        zIndex: 10,
+        position: "relative",
+        display: "block",
+      }}>
+      <div
+        ref={cardRef}
+        className="bg-gradient-to-br from-[#2b2d31] to-[#1e1f22] rounded-xl p-5 text-left w-full shadow-xl border border-white/5 backdrop-blur-md transition-all duration-300 hover:shadow-2xl">
+        <div className="flex items-center mb-5 animate-item">
+          <div className="relative w-14 h-14 mr-4 avatar-container">
+            <div className="w-14 h-14 rounded-full bg-gray-800 overflow-hidden ring-2 ring-white/10 shadow-lg">
+              <img
+                src={user.avatarUrl}
+                alt={`${user.username}'s Avatar`}
+                className="w-full h-full object-cover"
               />
-            </svg>
-            No activity detected
+            </div>
+            <div
+              ref={statusDotRef}
+              className={`absolute -bottom-1 -right-1 w-5 h-5 ${
+                statusColors[user.status]
+              } rounded-full border-2 border-[#1e1f22] shadow-glow`}></div>
+          </div>
+          <div>
+            <div className="font-bold text-lg">{user.username}</div>
+            <div className="text-sm opacity-80 capitalize flex items-center">
+              <span
+                className={`inline-block w-2 h-2 rounded-full ${statusColors[user.status]} mr-2`}></span>
+              {user.status}
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Spotify activity takes precedence */}
+        {spotify ? (
+          <div className="bg-gradient-to-r from-[#1DB954]/20 to-[#191414]/20 backdrop-blur-md rounded-lg p-4 text-sm transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item activity-card">
+            <div className="text-xs font-medium text-[#1DB954] mb-2 uppercase tracking-wider">
+              Listening to Spotify
+            </div>
+            <div className="flex items-center">
+              {getActivityIcon()}
+              <div className="flex-1 min-w-0">
+                <div className="font-bold text-white truncate">
+                  {spotify.song}
+                </div>
+                <div className="text-xs text-gray-300 truncate">
+                  by {spotify.artist}
+                </div>
+                <div className="text-xs text-gray-400 truncate">
+                  on {spotify.album}
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 h-1 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#1DB954] rounded-full"
+                style={{
+                  width: `${((Date.now() - spotify.startTime) / (spotify.endTime - spotify.startTime)) * 100}%`,
+                }}></div>
+            </div>
+          </div>
+        ) : currentActivity ? (
+          <div className="bg-gradient-to-r from-[#5865F2]/20 to-[#313338]/20 backdrop-blur-md rounded-lg p-4 text-sm transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item activity-card">
+            <div className="text-xs font-medium text-[#5865F2] mb-2 uppercase tracking-wider">
+              {currentActivity.type}
+            </div>
+            <div className="flex items-center">
+              {getActivityIcon()}
+              <div className="flex-1 min-w-0">
+                <div className="font-bold text-white truncate">
+                  {currentActivity.name}
+                </div>
+                {currentActivity.details && (
+                  <div className="text-xs text-gray-300 truncate">
+                    {currentActivity.details}
+                  </div>
+                )}
+                {currentActivity.state && (
+                  <div className="text-xs text-gray-400 truncate">
+                    {currentActivity.state}
+                  </div>
+                )}
+                <div className="text-xs text-[#b9bbbe] mt-1 flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3 w-3 mr-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  {formatTime(currentElapsed)} elapsed
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-[#36393f]/80 backdrop-blur-md rounded-lg p-4 text-sm text-center py-6 animate-item activity-card shadow-md">
+            <div className="text-gray-400 flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2 opacity-60"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              No activity detected
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
