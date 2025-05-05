@@ -1,0 +1,460 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+  --discord-online: 35, 165, 90;
+  --discord-idle: 250, 168, 26;
+  --discord-dnd: 240, 71, 71;
+  --discord-offline: 116, 127, 141;
+  --discord-primary: 88, 101, 242;
+  --discord-background: 49, 51, 56;
+  --discord-lighter: 54, 57, 63;
+}
+
+/* Update the Force custom cursor everywhere rule to only apply on non-touch devices */
+@media (hover: hover) and (pointer: fine) {
+  *:not(.loading-overlay *) {
+    cursor: none !important;
+  }
+}
+
+/* Hide custom cursor on mobile/touch devices */
+@media (hover: none) or (pointer: coarse) {
+  .custom-cursor {
+    display: none !important;
+  }
+}
+
+/* Custom cursor - ensure smooth transition between screens */
+.custom-cursor {
+  position: fixed;
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
+  z-index: 9999999;
+  will-change: transform;
+  top: 0;
+  left: 0;
+  transition: opacity 0.3s ease;
+  opacity: 1 !important;
+}
+
+.custom-cursor::before,
+.custom-cursor::after {
+  content: "";
+  position: absolute;
+  background-color: #ffffff;
+  transform-origin: center;
+  top: 50%;
+  left: 50%;
+  transition: none;
+}
+
+/* Horizontal line */
+.custom-cursor::before {
+  width: 24px;
+  height: 3px;
+  transform: translate(-50%, -50%);
+}
+
+/* Vertical line */
+.custom-cursor::after {
+  width: 3px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+}
+
+/* Hide dot */
+.custom-cursor-dot {
+  display: none;
+}
+
+/* Hide circle */
+.crosshair-circle {
+  display: none;
+}
+
+/* Hover state via class (applied with JS) */
+.custom-cursor.hover::before {
+  width: 30px;
+  height: 4px;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.custom-cursor.hover::after {
+  width: 4px;
+  height: 30px;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Loading page cursor - still using animation but optimized */
+.page-loader ~ .custom-cursor::before,
+.page-loader ~ .custom-cursor::after {
+  animation: none;
+}
+
+/* Loading overlay transitions */
+.loading-overlay {
+  transition: opacity 1.2s ease;
+  cursor: pointer !important;
+}
+
+/* Add specific styles for all elements inside the loading overlay */
+.loading-overlay * {
+  cursor: pointer !important;
+}
+
+/* Make this CSS rule more specific to override browser defaults */
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body,
+  *:not(input):not(textarea):not(select):not(.loading-overlay *),
+  *:not(input):not(textarea):not(select):not(.loading-overlay *)::before,
+  *:not(input):not(textarea):not(select):not(.loading-overlay *)::after {
+    cursor: none !important;
+  }
+}
+
+/* Prevent multiple clicks during transition */
+.pointer-events-none {
+  pointer-events: none !important;
+}
+
+/* Improved fade animation for loading page */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0.5;
+    filter: blur(0.5px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0.5;
+    filter: blur(0.5px);
+  }
+}
+
+/* Plus icon subtle animation */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  margin: 0;
+  padding: 0;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom Discord-like scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #202225;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #2f3136;
+}
+
+/* Glass effect */
+.glass {
+  @apply bg-black/40 backdrop-blur-md border border-white/10;
+}
+
+/* Animation for status indicator */
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+.status-online {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+/* Perspective & 3D transformations */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.profile-card {
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-5px) rotateX(2deg);
+}
+
+/* Micro-interactions */
+.social-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Status dot glow effect */
+.shadow-glow {
+  box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.15);
+}
+
+/* Modern scrollbar for the activity card */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+/* Animated text gradient */
+@keyframes textGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-text-gradient {
+  background: linear-gradient(to right, #fff, #5865f2, #fff);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textGradient 5s ease infinite;
+}
+
+.gradient-text {
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.9),
+    rgba(180, 180, 180, 0.8)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+/* Text glow effect */
+.text-glow {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+}
+
+/* Name stylization */
+.name-gradient {
+  background: linear-gradient(to right, #fff, #94a3b8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.name-gradient::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  background: linear-gradient(to right, #6366f1, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.5;
+  filter: blur(12px);
+}
+
+@layer base {
+  h1 {
+    @apply text-4xl font-bold;
+  }
+  h2 {
+    @apply text-3xl font-semibold;
+  }
+  h3 {
+    @apply text-2xl font-medium;
+  }
+  h4 {
+    @apply text-xl font-medium;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary/90;
+  }
+  .btn-secondary {
+    @apply bg-secondary text-white hover:bg-secondary/90;
+  }
+  .container-custom {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* Custom volume slider styles */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  height: 3px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.1);
+}
+
+input[type="range"]:focus {
+  outline: none;
+}
+
+input[type="range"]::-moz-range-track {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  height: 3px;
+}
+
+/* Fix for mobile viewport */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* Make the main content scrollable if needed */
+main {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  overscroll-behavior: contain;
+}
+
+/* Fix iOS 100vh issue */
+@supports (-webkit-touch-callout: none) {
+  .h-screen,
+  .min-h-screen {
+    height: -webkit-fill-available;
+  }
+}
+
+/* Make links and interactive elements easily clickable on mobile */
+@media (hover: none) or (pointer: coarse) {
+  a,
+  button,
+  .social-link,
+  [role="button"] {
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: rgba(
+      0,
+      0,
+      0,
+      0.1
+    ); /* Subtle feedback on tap */
+  }
+
+  /* Slightly increase tap target sizes for better mobile UX */
+  .social-link {
+    transform: scale(1.1);
+  }
+
+  .loading-overlay {
+    cursor: pointer !important;
+  }
+}
+
+/* Update the cursor rules to not interfere with click interaction */
+@media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+
+  /* Exception for loading screen */
+  .loading-overlay {
+    cursor: pointer !important;
+  }
+}
