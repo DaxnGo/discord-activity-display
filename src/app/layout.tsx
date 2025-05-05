@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Matthew's Portfolio",
-  description: "Personal portfolio and space",
+  title: "Matthew | Front-End Developer",
+  description: "Curious about me?",
   viewport:
     "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
   themeColor: "#000000",
@@ -31,16 +31,25 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://matthew-dev.io/",
+    url: "https://jpview.vercel.app/",
     title: "Matthew | Front-End Developer",
     description: "Curious about me?",
     siteName: "Matthew | Front-End Developer",
+    images: [
+      {
+        url: "https://jpview.vercel.app/images/136311199.jpeg",
+        width: 800,
+        height: 600,
+        alt: "Matthew | Front-End Developer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Matthew | Front-End Developer",
     description: "Curious about me?",
     creator: "@hellopassingby",
+    images: ["https://jpview.vercel.app/images/136311199.jpeg"],
   },
 };
 
@@ -71,6 +80,12 @@ export default function RootLayout({
             z-index: 50;
           }
         `}</style>
+        {/* Additional meta tags for social media sharing */}
+        <meta property="og:image:width" content="800" />
+        <meta property="og:image:height" content="600" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="theme-color" content="#000000" />
       </head>
       <body
         className={`${inter.variable} font-sans antialiased`}

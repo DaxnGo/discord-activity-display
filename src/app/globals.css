@@ -762,3 +762,46 @@ main {
 .radial-reveal {
   animation: radialReveal 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
+
+/* Add these rules to prevent Discord card from re-animating */
+.music-controls button:focus,
+.music-controls input:focus,
+.music-controls:hover,
+.music-controls:active,
+.music-controls * {
+  animation: none !important;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    background 0.2s ease !important;
+  animation-play-state: paused !important;
+  animation-fill-mode: forwards !important;
+}
+
+/* Prevent Discord activity card from re-animating when interacting with volume controls */
+.discord-activity-wrapper,
+.discord-activity-wrapper *,
+.profile-card,
+.profile-card * {
+  animation-play-state: forwards !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Specifically target the elements that might be re-animating */
+.animate-item,
+.activity-card,
+.avatar-container {
+  animation-play-state: forwards !important;
+  animation-iteration-count: 1 !important;
+  animation-fill-mode: forwards !important;
+}
+
+/* Fix Discord activity card once it has animated in */
+.content-ready .discord-activity-wrapper,
+.content-ready .animate-item,
+.content-ready .activity-card {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
