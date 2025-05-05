@@ -17,8 +17,14 @@
 
 /* Force custom cursor on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
-  *:not(.loading-overlay *) {
+  * {
     cursor: none !important;
+  }
+
+  /* Exception for loading overlay */
+  .loading-overlay,
+  .loading-overlay * {
+    cursor: pointer !important;
   }
 }
 
@@ -115,6 +121,25 @@
 .loading-overlay {
   transition: opacity 1.2s ease;
   cursor: pointer !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  inset: 0;
+  background-color: black;
+  z-index: 9999;
+}
+
+/* Typewriter text effect */
+.typewriter-text {
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0 auto;
+  letter-spacing: 0.05em;
+}
+
+.typewriter-text span {
+  display: inline-block;
 }
 
 /* Add specific styles for all elements inside the loading overlay */
@@ -151,6 +176,41 @@
   100% {
     opacity: 0.5;
     filter: blur(0.5px);
+  }
+}
+
+/* Loading screen text animation */
+@keyframes pulseText {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    border-right-color: transparent;
+  }
+  50% {
+    border-right-color: white;
   }
 }
 

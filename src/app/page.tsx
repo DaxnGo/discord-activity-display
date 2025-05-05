@@ -29,10 +29,24 @@ const ViewCounter = dynamic(() => import("@/components/ViewCounter"), {
 const LoadingScreen = ({ onClick }: { onClick: () => void }) => (
   <div className="loading-overlay" onClick={onClick}>
     <div className="text-center px-4">
-      <h1 className="text-white text-4xl md:text-5xl font-bold mb-2 tracking-wide">
-        click to enter...
+      <h1 className="text-white text-4xl md:text-5xl font-bold mb-2 tracking-wide typewriter-text">
+        <span className="inline-block animate-pulse">click</span>
+        <span
+          className="inline-block mx-2"
+          style={{ animation: "pulseText 2s infinite 0.3s" }}>
+          to
+        </span>
+        <span
+          className="inline-block"
+          style={{ animation: "pulseText 2s infinite 0.6s" }}>
+          enter...
+        </span>
       </h1>
-      <p className="text-white/40 text-sm mt-4">portfolio & personal space</p>
+      <p
+        className="text-white/40 text-sm mt-4"
+        style={{ animation: "pulseText 3s infinite" }}>
+        portfolio & personal space
+      </p>
     </div>
   </div>
 );
@@ -181,6 +195,12 @@ export default function Home() {
 
     document.body.classList.add("using-custom-cursor");
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
+
+    // Initialize cursor position at center of screen
+    if (cursorRef.current) {
+      cursorRef.current.style.transform = `translate(${window.innerWidth / 2}px, ${window.innerHeight / 2}px) translate(-50%, -50%)`;
+      cursorRef.current.style.opacity = "1";
+    }
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
