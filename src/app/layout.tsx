@@ -33,13 +33,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://matthew-dev.io/",
     title: "Matthew | Front-End Developer",
-    description: "Personal portfolio website showcasing my work and skills.",
+    description: "Curious about me?",
     siteName: "Matthew | Front-End Developer",
   },
   twitter: {
     card: "summary_large_image",
     title: "Matthew | Front-End Developer",
-    description: "Personal portfolio website showcasing my work and skills.",
+    description: "Curious about me?",
     creator: "@hellopassingby",
   },
 };
