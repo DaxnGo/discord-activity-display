@@ -2,7 +2,7 @@
 
 A visually rich, anime-inspired single-page app showcasing your Discord activity in real-time with background music.
 
-![Discord Activity Display](https://preview.example.com)
+![image](https://github.com/user-attachments/assets/de047b82-c904-45ec-9310-b0909b90b41d)
 
 ## 🌟 Features
 
