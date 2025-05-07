@@ -98,4 +98,4 @@ This project is optimized for deployment on Vercel. Simply push to your reposito
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request or reach out via email at [matthewpangemanan15@gmail.com].
