@@ -172,6 +172,11 @@ export default function DiscordActivity() {
 
   // Activity icon handler
   const getActivityIcon = () => {
+    // Add debug logging to see what's actually coming from Discord
+    if (process.env.NODE_ENV === "development") {
+      console.log("Activity data:", discordData?.currentActivity);
+    }
+
     if (discordData?.spotify) {
       return (
         <div className="w-12 h-12 bg-gray-800 rounded-lg mr-4 flex items-center justify-center overflow-hidden shadow-lg">
@@ -179,6 +184,10 @@ export default function DiscordActivity() {
             src={discordData.spotify.albumArt}
             alt={discordData.spotify.album}
             className="w-12 h-12 object-cover hover:scale-110 transition-transform duration-300"
+            onError={(e) => {
+              // Fallback if image fails to load
+              e.currentTarget.src = "/images/spotify-fallback.png";
+            }}
           />
         </div>
       );
@@ -186,10 +195,20 @@ export default function DiscordActivity() {
 
     if (discordData?.currentActivity?.largeImage) {
       let imageUrl = discordData.currentActivity.largeImage;
+
+      // Improved image URL handling
       if (imageUrl.startsWith("mp:")) {
         imageUrl = `https://media.discordapp.net/${imageUrl.replace("mp:", "")}`;
       } else if (imageUrl.startsWith("spotify:")) {
         imageUrl = `https://i.scdn.co/image/${imageUrl.replace("spotify:", "")}`;
+      } else if (imageUrl.startsWith("external:")) {
+        // For external URLs like YouTube, Twitch, etc.
+        imageUrl = imageUrl.replace("external:", "");
+      } else if (imageUrl.startsWith("https://")) {
+        // Already a full URL, keep as is
+      } else {
+        // For other Discord application assets
+        imageUrl = `https://cdn.discordapp.com/app-assets/${discordData.currentActivity.applicationId}/${imageUrl}.png`;
       }
 
       return (
@@ -201,11 +220,16 @@ export default function DiscordActivity() {
               discordData.currentActivity.name
             }
             className="w-12 h-12 object-cover hover:scale-110 transition-transform duration-300"
+            onError={(e) => {
+              // Fallback icon if the image fails to load
+              e.currentTarget.src = "/images/activity-fallback.png";
+            }}
           />
         </div>
       );
     }
 
+    // Default fallback
     return (
       <div className="w-12 h-12 bg-gray-800 rounded-lg mr-4 flex items-center justify-center text-sm shadow-lg backdrop-blur-sm">
         {discordData?.spotify ? (

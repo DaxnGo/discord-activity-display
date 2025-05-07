@@ -43,6 +43,7 @@ export interface LanyardData {
         small_image?: string;
         small_text?: string;
       };
+      application_id?: string;
     }>;
     active_on_discord_desktop: boolean;
     active_on_discord_mobile: boolean;
@@ -189,6 +190,7 @@ export function useLanyard(discordId: string) {
             largeText: activity.assets?.large_text,
             smallImage: activity.assets?.small_image,
             smallText: activity.assets?.small_text,
+            applicationId: activity.application_id || activity.id,
           }
         : null,
       spotify: data.data.spotify
