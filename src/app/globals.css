@@ -838,3 +838,7 @@ main {
   opacity: 1 !important;
   visibility: visible !important;
 }
+
+.clip-path-triangle {
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}

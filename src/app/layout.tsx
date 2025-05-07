@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { AnimationProvider } from "@/context/AnimationContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
+import CursorTrail from "@/components/CursorTrail";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -112,6 +113,7 @@ export default function RootLayout({
         <AnimationProvider>{children}</AnimationProvider>
         <SpeedInsights />
         <Analytics />
+        <CursorTrail />
       </body>
     </html>
   );
