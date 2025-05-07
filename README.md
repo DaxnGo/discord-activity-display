@@ -42,13 +42,8 @@ A modern, animated personal discord activity built with Next.js 13, featuring sm
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## 🏗️ Project Structure
+<pre> ## 🏗️ Project Structure ``` src/ ├── app/ # Next.js 13 app directory ├── components/ # Reusable UI components ├── context/ # React context providers └── hooks/ # Custom React hooks ``` </pre>
 
-src/
-├── app/ # Next.js 13 app directory
-├── components/ # Reusable UI components
-├── context/ # React context providers
-└── hooks/ # Custom React hooks
 
 ## 🛠️ Built With
 
