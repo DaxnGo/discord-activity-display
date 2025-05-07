@@ -74,6 +74,43 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       }
     );
 
+    // Create a more advanced timeline with better easing
+    const tl = gsap.timeline({ repeat: -1 });
+
+    // Enhanced heading animations with staggered effects
+    tl.from(clickRef.current, {
+      y: 20,
+      duration: 0.7,
+      ease: "elastic.out(1, 0.75)",
+    })
+      .from(
+        toRef.current,
+        {
+          y: 20,
+          duration: 0.7,
+          ease: "elastic.out(1, 0.75)",
+        },
+        "-=0.4"
+      )
+      .from(
+        enterRef.current,
+        {
+          y: 20,
+          duration: 0.7,
+          ease: "elastic.out(1, 0.75)",
+        },
+        "-=0.4"
+      )
+      .from(
+        cursorRef.current,
+        {
+          scale: 0.8,
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        "-=0.1"
+      );
+
     // More modern blinking cursor effect
     gsap.to(cursorRef.current, {
       opacity: 0.4,
@@ -161,15 +198,16 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
     // More pronounced glow animation on subtext
     gsap.to(subTextRef.current, {
       textShadow: "0 0 15px rgba(255, 255, 255, 0.9)",
-      duration: 2,
       repeat: -1,
       yoyo: true,
+      duration: 2,
       ease: "sine.inOut",
     });
 
     return () => {
       card.removeEventListener("mousemove", handleMouseMove);
       card.removeEventListener("mouseleave", handleMouseLeave);
+      tl.kill();
     };
   }, []);
 
