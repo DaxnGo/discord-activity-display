@@ -2,6 +2,8 @@
 
 A modern, animated personal discord activity built with Next.js 13, featuring smooth animations and real-time analytics integration.
 
+![image](https://github.com/user-attachments/assets/981a939f-2406-4002-b41c-79beeedb2ac2)
+
 ## 🌟 Features
 
 - ⚡ Built with Next.js 13.5.6 and React 18
