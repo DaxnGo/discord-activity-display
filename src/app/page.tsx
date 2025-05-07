@@ -614,6 +614,24 @@ export default function Home() {
     }
   }, [hasEntered]);
 
+  // Preload the video in the document head
+  useEffect(() => {
+    // Create link preload elements for video
+    const preloadVideo = document.createElement("link");
+    preloadVideo.rel = "preload";
+    preloadVideo.href = localVideoPath;
+    preloadVideo.as = "video";
+    preloadVideo.type = "video/mp4";
+
+    // Append to head
+    document.head.appendChild(preloadVideo);
+
+    // Cleanup
+    return () => {
+      document.head.removeChild(preloadVideo);
+    };
+  }, []);
+
   // When not entered show loading screen
   if (!hasEntered) {
     return (
