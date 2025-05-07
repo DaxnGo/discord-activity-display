@@ -97,33 +97,37 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      const moveX = (x - centerX) / 15;
-      const moveY = (y - centerY) / 15;
+      const moveX = (x - centerX) / 10;
+      const moveY = (y - centerY) / 10;
 
-      // Ensure the animation only applies to the card by using direct reference
       gsap.to(card, {
         rotationY: moveX,
         rotationX: -moveY,
         transformOrigin: "center center",
-        transformPerspective: 1000,
+        transformPerspective: 800,
         ease: "power2.out",
-        duration: 0.4,
+        duration: 0.3,
         boxShadow: `
-          ${-moveX * 0.5}px ${moveY * 0.5}px 20px rgba(0, 0, 0, 0.2),
+          ${-moveX * 0.8}px ${moveY * 0.8}px 25px rgba(0, 0, 0, 0.3),
           0 10px 30px rgba(0, 0, 0, 0.5)
         `,
+        z: 30,
+        translateY: moveY * 0.5,
+        translateX: -moveX * 0.5,
       });
     };
 
     const handleMouseLeave = () => {
-      // Only reset the card element
       if (!card) return;
 
       gsap.to(card, {
         rotationY: 0,
         rotationX: 0,
-        duration: 0.7,
-        ease: "elastic.out(1, 0.75)",
+        z: 0,
+        translateX: 0,
+        translateY: 0,
+        duration: 0.8,
+        ease: "elastic.out(1, 0.5)",
         boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
       });
     };
