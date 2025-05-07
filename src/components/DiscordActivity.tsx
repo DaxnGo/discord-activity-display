@@ -293,7 +293,7 @@ export default function DiscordActivity() {
       }}>
       <div
         ref={cardRef}
-        className="bg-gradient-to-br from-[#2b2d31] to-[#1e1f22] rounded-xl p-5 sm:p-5 p-3 text-left w-full shadow-xl border border-white/5 backdrop-blur-md transition-all duration-300 hover:shadow-2xl md:max-w-none max-w-[95%] mx-auto">
+        className="bg-gradient-to-br from-[#2b2d31] to-[#1e1f22] rounded-xl p-5 sm:p-5 text-left w-full shadow-xl border border-white/5 backdrop-blur-md transition-all duration-300 hover:shadow-2xl md:max-w-none max-w-[95%] mx-auto">
         <div className="flex items-center mb-5 animate-item md:gap-4 gap-2">
           <div className="relative md:w-14 md:h-14 w-12 h-12 mr-3 md:mr-4 avatar-container">
             <div className="md:w-14 md:h-14 w-12 h-12 rounded-full bg-gray-800 overflow-hidden ring-2 ring-white/10 shadow-lg">
