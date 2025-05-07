@@ -34,6 +34,7 @@ const ViewCounter = dynamic(() => import("@/components/ViewCounter"), {
 // Initial loading state
 const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const subTextRef = useRef<HTMLParagraphElement>(null);
   const clickRef = useRef<HTMLSpanElement>(null);
@@ -84,7 +85,7 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
     // Remove the static heading overlay that was being added to the body
 
     // Enhanced hover effect on the card
-    const card = containerRef.current;
+    const card = cardRef.current;
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!card) return;
@@ -96,13 +97,14 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      // Increased sensitivity for more noticeable effect
       const moveX = (x - centerX) / 15;
       const moveY = (y - centerY) / 15;
 
+      // Ensure the animation only applies to the card by using direct reference
       gsap.to(card, {
         rotationY: moveX,
         rotationX: -moveY,
+        transformOrigin: "center center",
         transformPerspective: 1000,
         ease: "power2.out",
         duration: 0.4,
@@ -114,6 +116,9 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
     };
 
     const handleMouseLeave = () => {
+      // Only reset the card element
+      if (!card) return;
+
       gsap.to(card, {
         rotationY: 0,
         rotationX: 0,
@@ -123,7 +128,7 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       });
     };
 
-    // Add ambient glow animation to enhance the atmosphere
+    // Add ambient glow animation only to the card
     gsap.to(card, {
       boxShadow:
         "0 10px 30px rgba(88, 101, 242, 0.3), 0 10px 30px rgba(0, 0, 0, 0.5)",
@@ -133,21 +138,29 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       ease: "sine.inOut",
     });
 
-    card.addEventListener("mousemove", handleMouseMove);
-    card.addEventListener("mouseleave", handleMouseLeave);
+    // Important: Add event listeners ONLY to the card element, not document or window
+    if (card) {
+      card.addEventListener("mousemove", handleMouseMove);
+      card.addEventListener("mouseleave", handleMouseLeave);
+    }
 
-    // More pronounced glow animation on subtext
-    gsap.to(subTextRef.current, {
-      textShadow: "0 0 15px rgba(255, 255, 255, 0.9)",
-      repeat: -1,
-      yoyo: true,
-      duration: 2,
-      ease: "sine.inOut",
-    });
+    // Check if subTextRef is valid before animating
+    if (subTextRef.current) {
+      gsap.to(subTextRef.current, {
+        textShadow: "0 0 15px rgba(255, 255, 255, 0.9)",
+        repeat: -1,
+        yoyo: true,
+        duration: 2,
+        ease: "sine.inOut",
+      });
+    }
 
     return () => {
-      card.removeEventListener("mousemove", handleMouseMove);
-      card.removeEventListener("mouseleave", handleMouseLeave);
+      // Only remove event listeners if card is still valid during cleanup
+      if (card) {
+        card.removeEventListener("mousemove", handleMouseMove);
+        card.removeEventListener("mouseleave", handleMouseLeave);
+      }
     };
   }, []);
 
@@ -156,7 +169,9 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       ref={containerRef}
       onClick={onClick}
       className="loading-overlay fixed inset-0 flex items-center justify-center bg-black/90 z-50 cursor-pointer">
-      <div className="glass-card p-8 rounded-xl backdrop-blur-lg bg-white/5 shadow-2xl relative">
+      <div
+        ref={cardRef}
+        className="glass-card p-8 rounded-xl backdrop-blur-lg bg-white/5 shadow-2xl cursor-pointer">
         <h1
           ref={headingRef}
           className="text-5xl font-bold mb-6 text-white text-center">
