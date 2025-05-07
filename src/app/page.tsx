@@ -857,17 +857,7 @@ export default function Home() {
           </div>
         </Suspense>
 
-        {hasEntered && (
-          <CursorTrail
-            color="#5865F2"
-            size={15}
-            trailLength={20}
-            interval={8}
-            blur={true}
-            fadeOut={true}
-            shape="circle" // "circle", "square", or "triangle"
-          />
-        )}
+        {hasEntered && <CursorTrail />}
       </main>
     </>
   );
