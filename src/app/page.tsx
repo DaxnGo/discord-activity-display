@@ -7,7 +7,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import CursorTrail from "@/components/CursorTrail";
 
 // Register GSAP plugins
 if (typeof window !== "undefined") {
@@ -856,8 +855,6 @@ export default function Home() {
             <ViewCounter />
           </div>
         </Suspense>
-
-        {hasEntered && <CursorTrail />}
       </main>
     </>
   );
