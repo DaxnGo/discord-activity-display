@@ -36,11 +36,76 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const subTextRef = useRef<HTMLParagraphElement>(null);
+  const clickRef = useRef<HTMLSpanElement>(null);
+  const toRef = useRef<HTMLSpanElement>(null);
+  const enterRef = useRef<HTMLSpanElement>(null);
+  const cursorRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    // Make sure elements are immediately visible before animations
+    if (headingRef.current) {
+      headingRef.current.style.opacity = "1";
+      headingRef.current.style.visibility = "visible";
+    }
+
+    if (clickRef.current && toRef.current && enterRef.current) {
+      clickRef.current.style.opacity = "1";
+      toRef.current.style.opacity = "1";
+      enterRef.current.style.opacity = "1";
+      clickRef.current.style.visibility = "visible";
+      toRef.current.style.visibility = "visible";
+      enterRef.current.style.visibility = "visible";
+    }
+
+    return () => {
+      // No cursor-related cleanup needed here
+    };
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Keep only the card hover animation effects
+    // Set initial state for all elements to be fully visible
+    gsap.set(
+      [clickRef.current, toRef.current, enterRef.current, cursorRef.current],
+      {
+        opacity: 1,
+        visibility: "visible",
+      }
+    );
+
+    // More modern blinking cursor effect
+    gsap.to(cursorRef.current, {
+      opacity: 0.4,
+      duration: 0.5,
+      repeat: -1,
+      yoyo: true,
+      ease: "power2.inOut",
+    });
+
+    // Render the content initially to ensure it's visible
+    setTimeout(() => {
+      if (headingRef.current) {
+        const staticHeading = document.createElement("div");
+        staticHeading.innerHTML = `
+          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; flex-direction: column; pointer-events: none;">
+            <h1 style="color: white; font-size: 3.5rem; font-weight: bold; margin-bottom: 1.5rem; text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);">
+              click to enter
+            </h1>
+            <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.25rem;">
+              Curious about me?
+            </p>
+          </div>
+        `;
+        document.body.appendChild(staticHeading);
+
+        return () => {
+          document.body.removeChild(staticHeading);
+        };
+      }
+    }, 100);
+
+    // Enhanced hover effect on the card
     const card = containerRef.current;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -53,6 +118,7 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
+      // Increased sensitivity for more noticeable effect
       const moveX = (x - centerX) / 15;
       const moveY = (y - centerY) / 15;
 
@@ -92,6 +158,15 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
     card.addEventListener("mousemove", handleMouseMove);
     card.addEventListener("mouseleave", handleMouseLeave);
 
+    // More pronounced glow animation on subtext
+    gsap.to(subTextRef.current, {
+      textShadow: "0 0 15px rgba(255, 255, 255, 0.9)",
+      duration: 2,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
+
     return () => {
       card.removeEventListener("mousemove", handleMouseMove);
       card.removeEventListener("mouseleave", handleMouseLeave);
@@ -106,8 +181,19 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       <div className="glass-card p-8 rounded-xl backdrop-blur-lg bg-white/5 shadow-2xl">
         <h1
           ref={headingRef}
-          className="text-5xl font-bold mb-6 text-white text-center text-glow">
-          click to enter
+          className="text-5xl font-bold mb-6 text-white text-center">
+          <span className="inline-block" ref={clickRef}>
+            click
+          </span>{" "}
+          <span className="inline-block" ref={toRef}>
+            to
+          </span>{" "}
+          <span className="inline-block" ref={enterRef}>
+            enter
+          </span>
+          <span ref={cursorRef} className="inline-block ml-1">
+            _
+          </span>
         </h1>
         <p ref={subTextRef} className="text-xl text-white/70 text-center">
           Curious about me?
