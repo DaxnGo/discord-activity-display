@@ -11,7 +11,7 @@ export default function ViewCounter() {
   const counterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Set up cleanup for unmount
+    // Set up for unmount
     return () => {
       isMounted.current = false;
     };
