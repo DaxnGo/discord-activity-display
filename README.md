@@ -7,9 +7,7 @@ A visually rich, anime-inspired single-page app showcasing your Discord activity
 ## 🌟 Features
 
 - 🎮 Real-time Discord activity display using the Lanyard API
-- 🎵 YouTube lofi music background (toggleable)
-- 🌙 Light/Dark mode toggle
-- 🪄 Anime-inspired design with smooth animations
+- 🎵 Anime-inspired design with smooth animations
 - 💻 Responsive and mobile-friendly
 
 ## 🚀 Getting Started
