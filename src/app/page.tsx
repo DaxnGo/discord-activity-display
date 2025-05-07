@@ -42,7 +42,7 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
   const cursorRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    // Make sure elements are immediately visible before animations
+    // Make sure elements are immediately visible without animations
     if (headingRef.current) {
       headingRef.current.style.opacity = "1";
       headingRef.current.style.visibility = "visible";
@@ -56,10 +56,6 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       toRef.current.style.visibility = "visible";
       enterRef.current.style.visibility = "visible";
     }
-
-    return () => {
-      // No cursor-related cleanup needed here
-    };
   }, []);
 
   useEffect(() => {
@@ -74,44 +70,9 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       }
     );
 
-    // Create a more advanced timeline with better easing
-    const tl = gsap.timeline({ repeat: -1 });
+    // Remove the staggered/bouncing animation, text stays static
 
-    // Enhanced heading animations with staggered effects
-    tl.from(clickRef.current, {
-      y: 20,
-      duration: 0.7,
-      ease: "elastic.out(1, 0.75)",
-    })
-      .from(
-        toRef.current,
-        {
-          y: 20,
-          duration: 0.7,
-          ease: "elastic.out(1, 0.75)",
-        },
-        "-=0.4"
-      )
-      .from(
-        enterRef.current,
-        {
-          y: 20,
-          duration: 0.7,
-          ease: "elastic.out(1, 0.75)",
-        },
-        "-=0.4"
-      )
-      .from(
-        cursorRef.current,
-        {
-          scale: 0.8,
-          duration: 0.3,
-          ease: "power2.out",
-        },
-        "-=0.1"
-      );
-
-    // More modern blinking cursor effect
+    // Blue blinking cursor effect
     gsap.to(cursorRef.current, {
       opacity: 0.4,
       duration: 0.5,
@@ -120,27 +81,7 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       ease: "power2.inOut",
     });
 
-    // Render the content initially to ensure it's visible
-    setTimeout(() => {
-      if (headingRef.current) {
-        const staticHeading = document.createElement("div");
-        staticHeading.innerHTML = `
-          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; flex-direction: column; pointer-events: none;">
-            <h1 style="color: white; font-size: 3.5rem; font-weight: bold; margin-bottom: 1.5rem; text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);">
-              click to enter
-            </h1>
-            <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.25rem;">
-              Curious about me?
-            </p>
-          </div>
-        `;
-        document.body.appendChild(staticHeading);
-
-        return () => {
-          document.body.removeChild(staticHeading);
-        };
-      }
-    }, 100);
+    // Remove the static heading overlay that was being added to the body
 
     // Enhanced hover effect on the card
     const card = containerRef.current;
@@ -207,7 +148,6 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
     return () => {
       card.removeEventListener("mousemove", handleMouseMove);
       card.removeEventListener("mouseleave", handleMouseLeave);
-      tl.kill();
     };
   }, []);
 
@@ -216,7 +156,7 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       ref={containerRef}
       onClick={onClick}
       className="loading-overlay fixed inset-0 flex items-center justify-center bg-black/90 z-50 cursor-pointer">
-      <div className="glass-card p-8 rounded-xl backdrop-blur-lg bg-white/5 shadow-2xl">
+      <div className="glass-card p-8 rounded-xl backdrop-blur-lg bg-white/5 shadow-2xl relative">
         <h1
           ref={headingRef}
           className="text-5xl font-bold mb-6 text-white text-center">
@@ -229,7 +169,7 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
           <span className="inline-block" ref={enterRef}>
             enter
           </span>
-          <span ref={cursorRef} className="inline-block ml-1">
+          <span ref={cursorRef} className="inline-block ml-1 text-blue-500">
             _
           </span>
         </h1>
@@ -323,7 +263,7 @@ export default function Home() {
     };
   }, []);
 
-  // Enhanced entrance animation
+  // Enhanced entrance animation without upward movement
   const handleEnterClick = useCallback(() => {
     const overlay = document.querySelector(".loading-overlay");
     const card = document.querySelector(".glass-card");
