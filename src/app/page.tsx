@@ -340,31 +340,21 @@ export default function Home() {
     const card = document.querySelector(".glass-card");
 
     if (overlay && card) {
-      // Create a more dramatic exit timeline
+      // Create a simpler exit timeline
       const exitTl = gsap.timeline({
         onComplete: () => {
           setHasEntered(true);
         },
       });
 
-      // Add a flash effect before scaling
-      exitTl
-        .to(card, {
-          boxShadow: "0 0 30px rgba(255, 255, 255, 0.8)",
-          duration: 0.2,
-        })
-        .to(
-          card,
-          {
-            scale: 1.15,
-            opacity: 0,
-            duration: 0.8,
-            ease: "power3.out",
-          },
-          "-=0.1"
-        );
+      // Simple fade out animation without scaling up
+      exitTl.to(card, {
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+      });
 
-      // Then fade out the overlay with a radial wipe effect
+      // Fade out the overlay with a radial wipe effect
       exitTl.to(
         overlay,
         {

@@ -1,14 +1,15 @@
-# 🧙‍♂️ Discord Activity Display
+# 🎨 Discord Activity
 
-A visually rich, anime-inspired single-page app showcasing your Discord activity in real-time with background music.
-
-![image](https://github.com/user-attachments/assets/de047b82-c904-45ec-9310-b0909b90b41d)
+A modern, animated personal discord activity built with Next.js 13, featuring smooth animations and real-time analytics integration.
 
 ## 🌟 Features
 
-- 🎮 Real-time Discord activity display using the Lanyard API
-- 🎵 Anime-inspired design with smooth animations
-- 💻 Responsive and mobile-friendly
+- ⚡ Built with Next.js 13.5.6 and React 18
+- 🎭 Smooth animations using Framer Motion and GSAP
+- 📱 Responsive design with Tailwind CSS
+- 📊 Performance tracking with Vercel Analytics and Speed Insights
+- 🎯 TypeScript for type safety
+- 🔄 Smooth scroll with Lenis
 
 ## 🚀 Getting Started
 
@@ -16,15 +17,15 @@ A visually rich, anime-inspired single-page app showcasing your Discord activity
 
 - Node.js (v16 or higher)
 - npm or yarn
-- Discord account
+- Git
 
 ### Installation
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/discord-activity-display.git
-   cd discord-activity-display
+   git clone [your-repo-url]
+   cd personal-portfolio
    ```
 
 2. Install dependencies:
@@ -39,80 +40,61 @@ A visually rich, anime-inspired single-page app showcasing your Discord activity
    npm run dev
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## 🔌 Discord Activity Setup
+## 🏗️ Project Structure
 
-To display your real-time Discord activity:
+src/
+├── app/ # Next.js 13 app directory
+├── components/ # Reusable UI components
+├── context/ # React context providers
+└── hooks/ # Custom React hooks
 
-1. **Get your Discord ID**:
+## 🛠️ Built With
 
-   - Enable Developer Mode in Discord settings
-   - Right-click on your profile and select "Copy ID"
+- **Framework:** Next.js 13.5.6
+- **Styling:** Tailwind CSS
+- **Animations:**
+  - Framer Motion
+  - GSAP
+- **Smooth Scroll:** @studio-freight/lenis
+- **Icons:** Lucide React
+- **Analytics:**
+  - Vercel Analytics
+  - Vercel Speed Insights
+- **Development Tools:**
+  - TypeScript
+  - ESLint
+  - PostCSS
+  - Autoprefixer
 
-2. **Join the Lanyard Discord server**:
+## 🔧 Troubleshooting
 
-   - Join https://discord.gg/UrXF2cfJ7F
-
-3. **Update the configuration**:
-   - Open `src/components/DiscordActivity.tsx`
-   - Replace `YOUR_DISCORD_ID` with your actual Discord ID
-
-See [DISCORD_SETUP.md](DISCORD_SETUP.md) for detailed instructions.
-
-## 🛠️ Troubleshooting
-
-If you encounter build errors:
-
-1. **Next.js version issues**:
-
-   - Make sure your Next.js version is correct in package.json
-   - This project uses Next.js 13.5.6 for compatibility
-
-2. **Image component errors**:
-
-   - If you get errors with the Image component, use standard `<img>` tags instead
-   - Configure next.config.js with the proper domains for images
-
-3. **Missing dependencies**:
-
-   - Run `npm install` to ensure all dependencies are properly installed
-
-4. **Package.json errors**:
-   - If you see errors about package.json, make sure there are no invalid characters
-   - Run `npm init -y` in your user directory if needed
-
-For more detailed troubleshooting, see our [troubleshooting guide](TROUBLESHOOTING.md).
+If you encounter any issues, please check our [TROUBLESHOOTING.md](TROUBLESHOOTING.md) guide.
 
 ## 📝 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgments
+## 🔄 Development
 
-- [Lanyard API](https://github.com/Phineas/lanyard) for Discord activity data
-- Next.js team for the amazing framework
-- Tailwind CSS for the utility-first CSS framework
+- Run development server: `npm run dev`
+- Build for production: `npm run build`
+- Start production server: `npm start`
+- Lint code: `npm run lint`
 
-## How to Use Local Video Background
+## 🌐 Deployment
 
-1. Place your video file in the `public/videos/` directory
-2. Supported video formats: MP4, WebM, Ogg
-3. Update the video path in `src/app/page.tsx`:
+This project is optimized for deployment on Vercel. Simply push to your repository and Vercel will handle the rest.
 
-```tsx
-const localVideoPath = "/videos/your-video-filename.mp4";
-const useLocalVideo = true;
-```
+## 💡 Best Practices
 
-4. For best performance, optimize your video:
-   - Resolution: 1920x1080 or lower
-   - Codec: H.264
-   - File size: Under 10MB if possible
-   - Duration: 10-30 seconds (will loop automatically)
+- Keep components small and focused
+- Follow TypeScript best practices
+- Use Tailwind CSS utility classes for styling
+- Implement responsive design patterns
+- Optimize images and assets for performance
 
-### Tips for Video Background
+## 🤝 Contributing
 
-- Keep the video simple with subtle movements
-- Use darker videos to ensure text remains readable
-- If your video has audio, set `isMuted={false}` to enable sound
+Contributions are welcome! Please feel free to submit a Pull Request.
