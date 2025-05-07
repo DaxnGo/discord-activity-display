@@ -37,6 +37,67 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const subTextRef = useRef<HTMLParagraphElement>(null);
 
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    // Keep only the card hover animation effects
+    const card = containerRef.current;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!card) return;
+
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const moveX = (x - centerX) / 15;
+      const moveY = (y - centerY) / 15;
+
+      gsap.to(card, {
+        rotationY: moveX,
+        rotationX: -moveY,
+        transformPerspective: 1000,
+        ease: "power2.out",
+        duration: 0.4,
+        boxShadow: `
+          ${-moveX * 0.5}px ${moveY * 0.5}px 20px rgba(0, 0, 0, 0.2),
+          0 10px 30px rgba(0, 0, 0, 0.5)
+        `,
+      });
+    };
+
+    const handleMouseLeave = () => {
+      gsap.to(card, {
+        rotationY: 0,
+        rotationX: 0,
+        duration: 0.7,
+        ease: "elastic.out(1, 0.75)",
+        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
+      });
+    };
+
+    // Add ambient glow animation to enhance the atmosphere
+    gsap.to(card, {
+      boxShadow:
+        "0 10px 30px rgba(88, 101, 242, 0.3), 0 10px 30px rgba(0, 0, 0, 0.5)",
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
+
+    card.addEventListener("mousemove", handleMouseMove);
+    card.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      card.removeEventListener("mousemove", handleMouseMove);
+      card.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
   return (
     <div
       ref={containerRef}
@@ -45,7 +106,7 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       <div className="glass-card p-8 rounded-xl backdrop-blur-lg bg-white/5 shadow-2xl">
         <h1
           ref={headingRef}
-          className="text-5xl font-bold mb-6 text-white text-center">
+          className="text-5xl font-bold mb-6 text-white text-center text-glow">
           click to enter
         </h1>
         <p ref={subTextRef} className="text-xl text-white/70 text-center">
