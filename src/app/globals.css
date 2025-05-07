@@ -200,13 +200,26 @@ body.content-ready .social-container {
 .loading-overlay {
   transition: opacity 1.2s ease;
   cursor: pointer !important;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   position: fixed;
   inset: 0;
   background-color: black;
   z-index: 9999;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Make sure glass-card and its contents are always visible */
+.loading-overlay .glass-card,
+.loading-overlay h1,
+.loading-overlay p {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  z-index: 100;
+  position: relative;
 }
 
 /* Typewriter text effect */
@@ -233,8 +246,10 @@ body.content-ready .social-container {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(12px);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 255, 255, 0.1);
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   transform-style: preserve-3d;
   will-change: transform, box-shadow;
@@ -249,12 +264,12 @@ body.content-ready .social-container {
   inset: 0;
   background: linear-gradient(
     45deg,
-    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.15) 0%,
     rgba(255, 255, 255, 0) 100%
   );
   z-index: -1;
   pointer-events: none;
-  opacity: 0.4;
+  opacity: 0.6;
   transition: opacity 0.4s ease;
 }
 

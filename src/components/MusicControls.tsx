@@ -28,6 +28,9 @@ export default function MusicControls({
     e.preventDefault();
     e.stopPropagation();
 
+    // Mark this event to prevent it from affecting other components
+    e.currentTarget.setAttribute("data-internal-event", "true");
+
     // Use a callback to ensure we have the latest state
     setIsMuted((prev) => {
       const newMutedState = !prev;
@@ -43,6 +46,9 @@ export default function MusicControls({
     // Prevent event from propagating
     e.preventDefault();
     e.stopPropagation();
+
+    // Mark this event to prevent it from affecting other components
+    e.currentTarget.setAttribute("data-internal-event", "true");
 
     const newLevel = parseFloat(e.target.value);
     setVolumeLevel(newLevel);
@@ -64,6 +70,10 @@ export default function MusicControls({
   const toggleVolumeSlider = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    // Mark this event to prevent it from affecting other components
+    e.currentTarget.setAttribute("data-internal-event", "true");
+
     setShowVolumeSlider(!showVolumeSlider);
     return false;
   };
@@ -81,6 +91,7 @@ export default function MusicControls({
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
+            e.currentTarget.setAttribute("data-internal-event", "true");
           }}>
           <input
             type="range"
@@ -90,9 +101,18 @@ export default function MusicControls({
             value={volumeLevel}
             onChange={handleVolumeChange}
             className="w-24 h-2 bg-white/30 rounded-lg appearance-none cursor-pointer"
-            onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.currentTarget.setAttribute("data-internal-event", "true");
+            }}
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.currentTarget.setAttribute("data-internal-event", "true");
+            }}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+              e.currentTarget.setAttribute("data-internal-event", "true");
+            }}
           />
         </div>
       )}

@@ -61,25 +61,44 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
-        <style>{`
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
           /* Critical CSS */
           body {
             margin: 0;
             padding: 0;
             background: #000;
             color: #fff;
-            font-family: ${inter.style.fontFamily};
+            font-family: '__Inter_Fallback_725fdb', '__Inter_Fallback_Fallback_725fdb';
           }
           .loading-overlay {
             position: fixed;
             inset: 0;
-            display: flex;
+            display: flex !important;
             align-items: center;
             justify-content: center;
             background: linear-gradient(to bottom, #000, #1a1a1a);
             z-index: 50;
+            opacity: 1 !important;
+            visibility: visible !important;
           }
-        `}</style>
+          .loading-overlay h1 {
+            opacity: 1 !important;
+            visibility: visible !important;
+            font-weight: bold;
+            font-size: 3.5rem;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(88, 101, 242, 0.4);
+            letter-spacing: 0.02em;
+          }
+          .loading-overlay .glass-card {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.1);
+          }
+          `,
+          }}
+        />
         {/* Additional meta tags for social media sharing */}
         <meta property="og:image:width" content="800" />
         <meta property="og:image:height" content="600" />

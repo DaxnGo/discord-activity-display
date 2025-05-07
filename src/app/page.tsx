@@ -42,7 +42,21 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
   const cursorRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    // No cursor creation logic here - leave it to the parent component
+    // Make sure elements are immediately visible before animations
+    if (headingRef.current) {
+      headingRef.current.style.opacity = "1";
+      headingRef.current.style.visibility = "visible";
+    }
+
+    if (clickRef.current && toRef.current && enterRef.current) {
+      clickRef.current.style.opacity = "1";
+      toRef.current.style.opacity = "1";
+      enterRef.current.style.opacity = "1";
+      clickRef.current.style.visibility = "visible";
+      toRef.current.style.visibility = "visible";
+      enterRef.current.style.visibility = "visible";
+    }
+
     return () => {
       // No cursor-related cleanup needed here
     };
@@ -51,12 +65,20 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // Set initial state for all elements to be fully visible
+    gsap.set(
+      [clickRef.current, toRef.current, enterRef.current, cursorRef.current],
+      {
+        opacity: 1,
+        visibility: "visible",
+      }
+    );
+
     // Create a more advanced timeline with better easing
     const tl = gsap.timeline({ repeat: -1 });
 
     // Enhanced heading animations with staggered effects
     tl.from(clickRef.current, {
-      opacity: 0,
       y: 20,
       duration: 0.7,
       ease: "elastic.out(1, 0.75)",
@@ -64,7 +86,6 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       .from(
         toRef.current,
         {
-          opacity: 0,
           y: 20,
           duration: 0.7,
           ease: "elastic.out(1, 0.75)",
@@ -74,7 +95,6 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       .from(
         enterRef.current,
         {
-          opacity: 0,
           y: 20,
           duration: 0.7,
           ease: "elastic.out(1, 0.75)",
@@ -84,7 +104,6 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
       .from(
         cursorRef.current,
         {
-          opacity: 0,
           scale: 0.8,
           duration: 0.3,
           ease: "power2.out",
@@ -94,12 +113,34 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
 
     // More modern blinking cursor effect
     gsap.to(cursorRef.current, {
-      opacity: 0,
+      opacity: 0.4,
       duration: 0.5,
       repeat: -1,
       yoyo: true,
       ease: "power2.inOut",
     });
+
+    // Render the content initially to ensure it's visible
+    setTimeout(() => {
+      if (headingRef.current) {
+        const staticHeading = document.createElement("div");
+        staticHeading.innerHTML = `
+          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; flex-direction: column; pointer-events: none;">
+            <h1 style="color: white; font-size: 3.5rem; font-weight: bold; margin-bottom: 1.5rem; text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);">
+              click to enter
+            </h1>
+            <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.25rem;">
+              Curious about me?
+            </p>
+          </div>
+        `;
+        document.body.appendChild(staticHeading);
+
+        return () => {
+          document.body.removeChild(staticHeading);
+        };
+      }
+    }, 100);
 
     // Enhanced hover effect on the card
     const card = containerRef.current;
@@ -174,11 +215,22 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
     <div className="loading-overlay" onClick={onClick}>
       <div
         ref={containerRef}
-        className="text-center px-8 py-10 glass-card transform-gpu"
-        style={{ transformStyle: "preserve-3d" }}>
+        className="text-center px-10 py-12 glass-card transform-gpu w-[95%] max-w-xl mx-auto"
+        style={{
+          transformStyle: "preserve-3d",
+          position: "relative",
+          zIndex: 100,
+          opacity: 1,
+          visibility: "visible",
+        }}>
         <h1
           ref={headingRef}
-          className="text-white text-5xl md:text-6xl font-bold mb-6 tracking-wide select-none">
+          className="text-white text-6xl md:text-7xl font-bold mb-8 tracking-wide select-none"
+          style={{
+            textShadow: "0 0 20px rgba(255, 255, 255, 0.8)",
+            position: "relative",
+            zIndex: 10,
+          }}>
           <span ref={clickRef} className="inline-block">
             click{" "}
           </span>
@@ -192,7 +244,7 @@ const LoadingScreen = ({ onClick }: { onClick: () => void }) => {
             _
           </span>
         </h1>
-        <p ref={subTextRef} className="text-white/70 text-lg mt-6 select-none">
+        <p ref={subTextRef} className="text-white/70 text-xl mt-8 select-none">
           Curious about me?
         </p>
       </div>

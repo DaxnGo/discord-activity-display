@@ -15,9 +15,20 @@ export const useCardAnimation = ({
 }: UseCardAnimationProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const { isLoaded } = useAnimation();
+  // Add reference to track if animation has already played
+  const animationPlayedRef = useRef(false);
 
   useEffect(() => {
     if (!isLoaded || !cardRef.current) return;
+
+    // Skip animation if it's already been played
+    if (animationPlayedRef.current) return;
+
+    // Check if this component has already been animated
+    if (cardRef.current.getAttribute("data-animated") === "true") {
+      animationPlayedRef.current = true;
+      return;
+    }
 
     const tl = gsap.timeline();
 
@@ -31,6 +42,14 @@ export const useCardAnimation = ({
       duration: 0.8,
       ease: "power2.out",
       delay: delay,
+      onComplete: () => {
+        // Mark that animation has played
+        animationPlayedRef.current = true;
+        // Set attribute on DOM element as a backup
+        if (cardRef.current) {
+          cardRef.current.setAttribute("data-animated", "true");
+        }
+      },
     });
 
     // Inner elements animation

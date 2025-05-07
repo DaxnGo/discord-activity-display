@@ -83,7 +83,19 @@ export default function DiscordActivity() {
   useEffect(() => {
     if (cardRef.current && discordData && !loading) {
       // Create a staggered entrance animation
-      const tl = gsap.timeline();
+      const tl = gsap.timeline({
+        // Add this to prevent animation from restarting when other components trigger rerenders
+        paused: true,
+        onComplete: () => {
+          // Set a flag to avoid rerunning the animation
+          cardRef.current?.setAttribute("data-animated", "true");
+        },
+      });
+
+      // Don't run animation if it's already been played
+      if (cardRef.current.getAttribute("data-animated") === "true") {
+        return;
+      }
 
       // Main card entrance
       tl.fromTo(
@@ -129,6 +141,9 @@ export default function DiscordActivity() {
           "-=0.3"
         );
       }
+
+      // Start the animation
+      tl.play();
     }
   }, [discordData, loading]);
 
@@ -278,10 +293,10 @@ export default function DiscordActivity() {
       }}>
       <div
         ref={cardRef}
-        className="bg-gradient-to-br from-[#2b2d31] to-[#1e1f22] rounded-xl p-5 text-left w-full shadow-xl border border-white/5 backdrop-blur-md transition-all duration-300 hover:shadow-2xl">
-        <div className="flex items-center mb-5 animate-item">
-          <div className="relative w-14 h-14 mr-4 avatar-container">
-            <div className="w-14 h-14 rounded-full bg-gray-800 overflow-hidden ring-2 ring-white/10 shadow-lg">
+        className="bg-gradient-to-br from-[#2b2d31] to-[#1e1f22] rounded-xl p-5 sm:p-5 p-3 text-left w-full shadow-xl border border-white/5 backdrop-blur-md transition-all duration-300 hover:shadow-2xl md:max-w-none max-w-[95%] mx-auto">
+        <div className="flex items-center mb-5 animate-item md:gap-4 gap-2">
+          <div className="relative md:w-14 md:h-14 w-12 h-12 mr-3 md:mr-4 avatar-container">
+            <div className="md:w-14 md:h-14 w-12 h-12 rounded-full bg-gray-800 overflow-hidden ring-2 ring-white/10 shadow-lg">
               <img
                 src={user.avatarUrl}
                 alt={`${user.username}'s Avatar`}
@@ -290,13 +305,15 @@ export default function DiscordActivity() {
             </div>
             <div
               ref={statusDotRef}
-              className={`absolute -bottom-1 -right-1 w-5 h-5 ${
+              className={`absolute -bottom-1 -right-1 md:w-5 md:h-5 w-4 h-4 ${
                 statusColors[user.status]
               } rounded-full border-2 border-[#1e1f22] shadow-glow`}></div>
           </div>
           <div>
-            <div className="font-bold text-lg">{user.username}</div>
-            <div className="text-sm opacity-80 capitalize flex items-center">
+            <div className="font-bold md:text-lg text-base">
+              {user.username}
+            </div>
+            <div className="md:text-sm text-xs opacity-80 capitalize flex items-center">
               <span
                 className={`inline-block w-2 h-2 rounded-full ${statusColors[user.status]} mr-2`}></span>
               {user.status}
@@ -306,20 +323,20 @@ export default function DiscordActivity() {
 
         {/* Spotify activity takes precedence */}
         {spotify ? (
-          <div className="bg-gradient-to-r from-[#1DB954]/20 to-[#191414]/20 backdrop-blur-md rounded-lg p-4 text-sm transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item activity-card">
+          <div className="bg-gradient-to-r from-[#1DB954]/20 to-[#191414]/20 backdrop-blur-md rounded-lg md:p-4 p-3 md:text-sm text-xs transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item activity-card">
             <div className="text-xs font-medium text-[#1DB954] mb-2 uppercase tracking-wider">
               Listening to Spotify
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center md:gap-4 gap-2">
               {getActivityIcon()}
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-white truncate">
                   {spotify.song}
                 </div>
-                <div className="text-xs text-gray-300 truncate">
+                <div className="md:text-xs text-[10px] text-gray-300 truncate">
                   by {spotify.artist}
                 </div>
-                <div className="text-xs text-gray-400 truncate">
+                <div className="md:text-xs text-[10px] text-gray-400 truncate">
                   on {spotify.album}
                 </div>
               </div>
@@ -333,27 +350,27 @@ export default function DiscordActivity() {
             </div>
           </div>
         ) : currentActivity ? (
-          <div className="bg-gradient-to-r from-[#5865F2]/20 to-[#313338]/20 backdrop-blur-md rounded-lg p-4 text-sm transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item activity-card">
+          <div className="bg-gradient-to-r from-[#5865F2]/20 to-[#313338]/20 backdrop-blur-md rounded-lg md:p-4 p-3 md:text-sm text-xs transform transition-all duration-300 hover:scale-[1.02] shadow-md animate-item activity-card">
             <div className="text-xs font-medium text-[#5865F2] mb-2 uppercase tracking-wider">
               {currentActivity.type}
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center md:gap-4 gap-2">
               {getActivityIcon()}
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-white truncate">
                   {currentActivity.name}
                 </div>
                 {currentActivity.details && (
-                  <div className="text-xs text-gray-300 truncate">
+                  <div className="md:text-xs text-[10px] text-gray-300 truncate">
                     {currentActivity.details}
                   </div>
                 )}
                 {currentActivity.state && (
-                  <div className="text-xs text-gray-400 truncate">
+                  <div className="md:text-xs text-[10px] text-gray-400 truncate">
                     {currentActivity.state}
                   </div>
                 )}
-                <div className="text-xs text-[#b9bbbe] mt-1 flex items-center">
+                <div className="md:text-xs text-[10px] text-[#b9bbbe] mt-1 flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-3 w-3 mr-1"
@@ -373,7 +390,7 @@ export default function DiscordActivity() {
             </div>
           </div>
         ) : (
-          <div className="bg-[#36393f]/80 backdrop-blur-md rounded-lg p-4 text-sm text-center py-6 animate-item activity-card shadow-md">
+          <div className="bg-[#36393f]/80 backdrop-blur-md rounded-lg md:p-4 p-3 md:text-sm text-xs text-center py-6 animate-item activity-card shadow-md">
             <div className="text-gray-400 flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
